@@ -78,7 +78,10 @@ public class SnoozeActivity extends BaseActivity {
 
     static public int getDefaultSnooze(AlertType.alertType type) {
         if (type == AlertType.alertType.high) {
-            return 120;
+            return 120; // default for high is 2 hours
+        }
+        if (type == AlertType.alertType.missed) {
+            return 180; // default for missed data is 3 hours
         }
         return 30;
     }
@@ -92,6 +95,7 @@ public class SnoozeActivity extends BaseActivity {
         picker.setMaxValue(values.length -1);
         picker.setMinValue(0);
         picker.setDisplayedValues(values);
+        // don't wrap around
         picker.setWrapSelectorWheel(false);
         if(default_snooze != 0) {
             picker.setValue(getSnoozeLocation(default_snooze));
@@ -130,6 +134,18 @@ public class SnoozeActivity extends BaseActivity {
 
         //high alerts
         disableHighAlerts = (Button)findViewById(R.id.button_disable_high_alerts);
+        disableHighAlerts.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                int intValue = getTimeFromSnoozeValue(snoozeValue.getValue());
+                AlertPlayer.getPlayer().Snooze(getApplicationContext(), intValue);
+                Intent intent = new Intent(getApplicationContext(), Home.class);
+                if (ActiveBgAlert.getOnly() != null) {
+                    startActivity(intent);
+                }
+                finish();
+            }
+        });
+
         clearHighDisabled = (Button)findViewById(R.id.enable_high_alerts);
 
         //all alerts
@@ -275,11 +291,11 @@ public class SnoozeActivity extends BaseActivity {
 
         // aba and activeBgAlert should both either exist ot not exist. all other cases are a bug in another place
         if(aba == null && activeBgAlert!= null) {
-            UserError.Log.wtf(TAG, "ERRRO displayStatus: aba == null, but activeBgAlert != null exiting...");
+            UserError.Log.wtf(TAG, "ERROR displayStatus: aba == null, but activeBgAlert != null exiting...");
             return;
         }
         if(aba != null && activeBgAlert== null) {
-            UserError.Log.wtf(TAG, "ERRRO displayStatus: aba != null, but activeBgAlert == null exiting...");
+            UserError.Log.wtf(TAG, "ERROR displayStatus: aba != null, but activeBgAlert == null exiting...");
             return;
         }
         String status;

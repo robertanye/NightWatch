@@ -214,7 +214,8 @@ public class DataCollectionService extends Service {
 
                         }
                     };
-                    Boolean shareRest = new ShareRest(mContext, null).getBgReadings(requestCount,  shareDataCallback );
+                    //Boolean shareRest = new ShareRest(mContext).getBgReadings(requestCount,  shareDataCallback );
+                    Boolean shareRest = new ShareRest(mContext).getBgData();
                     if ( shareRest ) {
                         //test wakelock: stay awake a bit to handover wakelog
                         PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
