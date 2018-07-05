@@ -348,6 +348,7 @@ public class EditAlertActivity extends BaseActivity {
     private boolean verifyThreshold(double threshold) {
         List<AlertType> lowAlerts = AlertType.getAll(AlertType.alertType.low);
         List<AlertType> highAlerts = AlertType.getAll(AlertType.alertType.high);
+        List<AlertType> missedAlerts = AlertType.getAll(AlertType.alertType.missed);
 
         if (typeOfAlert != AlertType.alertType.missed) {
             if(threshold < MIN_ALERT || threshold > MAX_ALERT) {

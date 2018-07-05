@@ -17,9 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -261,7 +259,7 @@ public class ShareRest {
 
     }
     public Map<String, String> queryParamMap(String sessionId) {
-        Map map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("sessionID", sessionId);
         map.put("minutes", String.valueOf(minutesCount()));
         map.put("maxCount", String.valueOf(requestCount()));
@@ -354,7 +352,7 @@ public class ShareRest {
     }
 
     public Map<String, String> querySessionMap(String sessionId) {
-        Map map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("sessionID", sessionId);
         return map;
 

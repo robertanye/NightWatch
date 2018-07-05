@@ -41,10 +41,18 @@ public class IdempotentMigrations {
 
             int bg_high_snooze = Integer.parseInt(prefs.getString("bg_snooze",  Integer.toString(SnoozeActivity.getDefaultSnooze(AlertType.alertType.high))));
             int bg_low_snooze = Integer.parseInt(prefs.getString("bg_snooze",  Integer.toString(SnoozeActivity.getDefaultSnooze(AlertType.alertType.low))));
+            int bg_missed_snooze = Integer.parseInt(prefs.getString("bg_snooze",  Integer.toString(SnoozeActivity.getDefaultSnooze(AlertType.alertType.missed))));
 
 
-            //AlertType.add_alert(null, "High Alert", true, highMark, true, 1, bg_notification_sound, 0, 0, bg_sound_in_silent, bg_high_snooze, true);
-            //AlertType.add_alert(null, "Low Alert", false, lowMark, true, 1, bg_notification_sound, 0, 0, bg_sound_in_silent, bg_low_snooze, true);
+            AlertType.add_alert(null, "High Alert", AlertType.alertType.high, highMark, true,
+                    1, bg_notification_sound, 0, 0, bg_sound_in_silent, bg_high_snooze, true);
+
+            AlertType.add_alert(null, "Low Alert", AlertType.alertType.low, lowMark,
+                    true, 1, bg_notification_sound, 0, 0, bg_sound_in_silent, bg_low_snooze, true);
+
+            AlertType.add_alert(null, "Missed Data", AlertType.alertType.missed, 30,
+                    true, 1, bg_notification_sound, 0, 0, bg_sound_in_silent, bg_missed_snooze, true);
+
             prefs.edit().putBoolean("bg_notifications", false).apply();
         }
     }

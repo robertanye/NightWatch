@@ -38,14 +38,14 @@ public class Rest {
     Rest(Context context) {
         mContext = context;
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        mUrl = prefs.getString("dex_collection_method", "https://{yoursite}.azurewebsites.net");
+        mUrl = prefs.getString("dex_collection_method", "https://{yoursite}.herokuapp.com");
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         this.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "rest wakelock");
         wakeLock.acquire();
     }
 
     public boolean getBg(int count) {
-        if (!prefs.getBoolean("nightscout_poll", false) && mUrl.compareTo("") != 0 && mUrl.compareTo("https://{yoursite}.azurewebsites.net") != 0) {
+        if (!prefs.getBoolean("nightscout_poll", false) && mUrl.compareTo("") != 0 && mUrl.compareTo("https://{yoursite}herokuapp.com") != 0) {
             if(wakeLock != null && wakeLock.isHeld()) { wakeLock.release(); }
             return false;
         }
@@ -53,10 +53,21 @@ public class Rest {
             boolean newData = false;
             PebbleEndpoint Bgs;
 
-            Bgs = pebbleEndpointInterface().getPebbleInfo(UNITS,count).execute().body();
+            if ( count > 1 ) {
+                Bgs = pebbleEndpointInterface().getPebbleInfo(UNITS,count).execute().body();
+
+            } else {
+                Bgs = pebbleEndpointInterface().getPebbleInfo(UNITS).execute().body();
+            }
 
 
             double slope = 0, intercept = 0, scale = 0;
+            if (Bgs.cals != null && Bgs.cals.size() != 0){
+                Cal cal = Bgs.cals.get(0);
+                slope = cal.slope;
+                intercept = cal.intercept;
+                scale = cal.scale;
+            }
 
             for (Bg returnedBg: Bgs.bgs) {
                 if (Bg.is_new(returnedBg)) {

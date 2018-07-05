@@ -58,7 +58,7 @@ public class UserError extends Model {
     }
 
     public static void cleanup() {
-       new Cleanup().execute(deletable());
+        final AsyncTask<List<UserError>, Integer, Boolean> execute = new Cleanup().execute(deletable());
     }
 
     public static List<UserError> all() {

@@ -97,8 +97,16 @@ public class AlertList extends BaseActivity {
             Intent myIntent = new Intent(AlertList.this, EditAlertActivity.class);
 
 
+            if (lv == listViewHigh ){
+                myIntent.putExtra( "alertTypeClicked", "high" );
+            }
+            if (lv == listViewLow ){
+                myIntent.putExtra( "alertTypeClicked", "low" );
+            }
+            if (lv == listViewMissed ){
+                myIntent.putExtra( "alertTypeClicked", "missed" );
+            }
             myIntent.putExtra("uuid", item.get("uuid")); //Optional parameters
-            myIntent.putExtra( "alertTypeClicked", "missed");
             AlertList.this.startActivityForResult(myIntent, EDIT_ALERT);
             return true;
         }
