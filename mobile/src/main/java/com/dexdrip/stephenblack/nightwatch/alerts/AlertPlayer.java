@@ -9,7 +9,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 
 import com.dexdrip.stephenblack.nightwatch.model.ActiveBgAlert;
 import com.dexdrip.stephenblack.nightwatch.model.AlertType;

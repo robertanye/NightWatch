@@ -1,6 +1,6 @@
 package com.dexdrip.stephenblack.nightwatch.alerts;
 
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;

@@ -7,14 +7,14 @@
     android:layout_height="match_parent"
     android:id="@+id/main_layout"
     tools:context=".activities.Home">
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:background="?attr/colorPrimary"
         android:gravity="center"
         android:elevation="4dp"/>
-    <android.support.v4.widget.DrawerLayout
+    <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -46,7 +46,7 @@
             android:minHeight="1dp"
             android:minWidth="1dp">
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TD"
@@ -58,7 +58,7 @@
                 android:minHeight="1dp"
                 android:minWidth="1dp"/>
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="YTD"
@@ -70,7 +70,7 @@
                 android:minHeight="1dp"
                 android:minWidth="1dp"/>
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="7d"
@@ -82,7 +82,7 @@
                 android:minHeight="1dp"
                 android:minWidth="1dp"/>
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="30d"
@@ -94,7 +94,7 @@
                 android:minHeight="1dp"
                 android:minWidth="1dp"/>
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="90d"
@@ -113,7 +113,7 @@
             android:layout_gravity="center_horizontal"
             android:id="@+id/indicator_layout">
         </LinearLayout>
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
         android:layout_width="match_parent"
@@ -130,6 +130,6 @@
             android:layout_gravity="start"
             android:name="com.dexdrip.stephenblack.nightwatch.NavigationDrawerFragment"
             tools:layout="@layout/fragment_navigation_drawer" />
-    </android.support.v4.widget.DrawerLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
 </LinearLayout>
 

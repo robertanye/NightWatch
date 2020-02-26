@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.dexdrip.stephenblack.nightwatch.Constants;
 import com.dexdrip.stephenblack.nightwatch.R;
-
-import org.w3c.dom.Text;
 
 import java.util.Collections;
 import java.util.Comparator;

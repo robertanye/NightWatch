@@ -1,7 +1,7 @@
 package com.dexdrip.stephenblack.nightwatch.integration.dexdrip;
 
 import android.content.Intent;
-import android.support.v4.content.WakefulBroadcastReceiver;
+import androidx.legacy.content.WakefulBroadcastReceiver;
 
 import com.dexdrip.stephenblack.nightwatch.model.Bg;
 import com.dexdrip.stephenblack.nightwatch.DataCollectionService;

@@ -15,7 +15,7 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;

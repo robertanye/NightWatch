@@ -40,6 +40,8 @@ import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewLineChartView;
 
+import static android.preference.PreferenceManager.*;
+
 
 public class Home extends BaseActivity {
     public static final String MENU_NAME = "NightWatch";
@@ -73,17 +75,17 @@ public class Home extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
-        PreferenceManager.setDefaultValues(this, R.xml.pref_license, false);
-        PreferenceManager.setDefaultValues(this, R.xml.pref_data_source, false);
-        PreferenceManager.setDefaultValues(this, R.xml.pref_other, false);
-        PreferenceManager.setDefaultValues(this, R.xml.pref_bg_notification, false);
-        PreferenceManager.setDefaultValues(this, R.xml.pref_watch_integration, false);
+        setDefaultValues(this, R.xml.pref_general, false);
+        setDefaultValues(this, R.xml.pref_license, false);
+        setDefaultValues(this, R.xml.pref_data_source, false);
+        setDefaultValues(this, R.xml.pref_other, false);
+        setDefaultValues(this, R.xml.pref_bg_notification, false);
+        setDefaultValues(this, R.xml.pref_watch_integration, false);
         Fabric.with(this, new Crashlytics());
 
 
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs = getDefaultSharedPreferences(this);
 
         checkEula();
 

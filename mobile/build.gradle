@@ -37,12 +37,12 @@ def getDevVersionCode() {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25'
+    compileSdkVersion 29
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.dexdrip.stephenblack.nightwatch"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 29
         versionName '2.0.7'
         multiDexEnabled true
 
@@ -64,8 +64,7 @@ android {
                     def buildType = variant.variantData.variantConfiguration.buildType.name
                     def flavor = variant.productFlavors[0].name
                     def newApkName = project + SEP + flavor + SEP + buildType + SEP + version + SEP + versionCode + SEP + formattedDate + ".apk"
-
-                    output.outputFile = new File(output.outputFile.parent, newApkName)
+                    //output.outputFile = new File(output.outputFile.parent, newApkName)
                 }
 
             }
@@ -79,7 +78,7 @@ android {
                 def buildType = variant.variantData.variantConfiguration.buildType.name
                 def newApkName = project + SEP + buildType + SEP + version + SEP + versionCode + ".apk"
 
-                output.outputFile = new File(output.outputFile.parent, newApkName)
+                //output.outputFile = new File(output.outputFile.parent, newApkName)
             }
 
         }
@@ -87,29 +86,27 @@ android {
         }
     }
     productFlavors {
-        rel {
-            versionCode getReleaseVersionCode()
-        }
         dev {
             versionCode getDevVersionCode()
         }
     }
+    flavorDimensions 'dim'
 
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile fileTree( dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree( dir: 'libs')
     wearApp project(':wear')
-    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
-    compile 'com.squareup.okhttp3:okhttp:3.3.0'
-    compile 'com.google.android.gms:play-services-wearable:10.0.1'
-    compile 'com.getpebble:pebblekit:3.0.0'
-    compile 'com.github.lecho:hellocharts-android:v1.5.5'
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.android.support:recyclerview-v7:23.1.0'
-    compile('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
+    implementation 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.4.0'
+    implementation 'com.google.android.gms:play-services-wearable:17.0.0'
+    implementation 'com.getpebble:pebblekit:4.0.1'
+    implementation 'com.github.lecho:hellocharts-android:v1.5.5'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true;
     }
 }
