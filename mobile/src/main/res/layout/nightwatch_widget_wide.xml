@@ -4,9 +4,9 @@
     android:layout_height="wrap_content">
     <ImageView android:id="@+id/widgetGraphWide"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" android:contentDescription="Blood Glucose Graph"
+        android:layout_height="match_parent" android:contentDescription="@string/blood_glucose_graph"
         android:scaleType="centerInside"/>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -24,8 +24,8 @@
 
             <TextView android:id="@+id/wwidgetBg"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent" android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true" android:text="---"
+                android:layout_height="fill_parent"
+                android:text="@string/__three_dashes__"
                 android:textColor="#ffffff" android:textSize="55sp"
                 android:layout_marginTop="-5dp"/>
             <LinearLayout
@@ -38,28 +38,30 @@
                     android:layout_height="wrap_content"
                     android:textColor="#ffffff"
                     android:textSize="37sp"
-                    android:text="--"
+                    android:text="@string/_two_dashes_"
                     android:id="@+id/wwidgetArrow"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="-5dp"/>
+
                 <TextView
+                    android:id="@+id/wwidgetDelta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/mgdl"
                     android:textColor="#ffffff"
-                    android:textSize="10sp"
-                    android:text="-- mgdl"
-                    android:id="@+id/wwidgetDelta"
-                    android:layout_gravity="center_horizontal"/>
+                    android:textSize="12sp" />
             </LinearLayout>
 
         </LinearLayout>
+
         <TextView
+            android:id="@+id/wreadingAge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/minutes_ago"
             android:textColor="#ffffff"
-            android:textSize="10sp"
-            android:text="-- minutes ago"
-            android:id="@+id/wreadingAge"
-            android:layout_gravity="center_horizontal"/>
+            android:textSize="12sp" />
     </LinearLayout>
 </FrameLayout>

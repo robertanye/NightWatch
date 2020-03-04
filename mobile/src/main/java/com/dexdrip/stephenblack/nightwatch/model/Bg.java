@@ -2,6 +2,7 @@ package com.dexdrip.stephenblack.nightwatch.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 
@@ -13,13 +14,14 @@ import com.dexdrip.stephenblack.nightwatch.Cal;
 import com.dexdrip.stephenblack.nightwatch.Constants;
 import com.dexdrip.stephenblack.nightwatch.alerts.Notifications;
 import com.dexdrip.stephenblack.nightwatch.model.UserError.Log;
-import com.google.android.gms.common.api.BooleanResult;
 import com.google.android.gms.wearable.DataMap;
 import com.google.gson.annotations.Expose;
 
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * Created by stephenblack on 12/26/14.
@@ -144,11 +146,7 @@ public class Bg extends Model {
 
     public boolean doMgdl() {
         String unit = prefs.getString("units", "mgdl");
-        if (unit.compareTo("mgdl") == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return unit.compareTo("mgdl") == 0;
     }
 
     public int battery_int() {
@@ -391,11 +389,7 @@ public class Bg extends Model {
                 .where("datetime <= ?", (timestamp + (2 * 1000)))
                 .orderBy("datetime desc")
                 .executeSingle();
-        if(bg != null && bg.datetime >= (timestamp - (2 * 1000))) {
-            return true;
-        } else {
-            return false;
-        }
+        return bg != null && bg.datetime >= (timestamp - (2 * 1000));
     }
 
     public static Long getTimeSinceLastReading() {
@@ -454,6 +448,7 @@ public class Bg extends Model {
         return mmolConvert(sgv_double());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public static void checkForRisingAllert(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean rising_alert = prefs.getBoolean("rising_alert", false);
@@ -478,12 +473,13 @@ public class Bg extends Model {
         }
         Log.d(TAG_ALERT, "checkForRisingAllert will check for rate of " + friseRate);
 
-        boolean riseAlert = checkForDropRiseAllert(friseRate, false);
+        boolean riseAlert = checkForDropRiseAlert(friseRate, false);
         Notifications.RisingAlert(context, riseAlert);
     }
 
 
-    public static void checkForDropAllert(Context context) {
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void checkForDropAlert(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean falling_alert = prefs.getBoolean("falling_alert", false);
         if(!falling_alert) {
@@ -507,13 +503,13 @@ public class Bg extends Model {
         }
         Log.i(TAG_ALERT, "checkForDropAllert will check for rate of " + fdropRate);
 
-        boolean dropAlert = checkForDropRiseAllert(fdropRate, true);
+        boolean dropAlert = checkForDropRiseAlert(fdropRate, true);
         Notifications.DropAlert(context, dropAlert);
     }
 
     // true say, alert is on.
-    private static boolean checkForDropRiseAllert(float MaxSpeed, boolean drop) {
-        Log.d(TAG_ALERT, "checkForDropRiseAllert called drop=" + drop);
+    private static boolean checkForDropRiseAlert(float MaxSpeed, boolean drop) {
+        Log.d(TAG_ALERT, "checkForDropRiseAslert called drop=" + drop);
         List<Bg> latest = getXRecentPoints(4);
         if(latest == null) {
             Log.d(TAG_ALERT, "checkForDropRiseAllert we don't have enough points from the last 15 minutes, returning false");

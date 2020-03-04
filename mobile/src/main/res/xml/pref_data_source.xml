@@ -26,14 +26,14 @@
             android:key="dexcom_account_name"
             android:title="Dexcom Account Login"
             android:summary="Your login for Dexcoms Website"
-            android:defaultValue=""/>
+            android:defaultValue="yourlogin@dexcom.com"/>
         <EditTextPreference
             android:dependency="share_poll"
             android:key="dexcom_account_password"
             android:title="Dexcom Account Password"
             android:inputType="textPassword"
             android:summary="Your password for Dexcoms Website"
-            android:defaultValue=""/>
+            android:defaultValue="thisisyourpassword"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

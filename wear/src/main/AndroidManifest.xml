@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.dexdrip.stephenblack.nightwatch" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.dexdrip.stephenblack.nightwatch" >
 
     <uses-feature android:name="android.hardware.type.watch" />
     <uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
@@ -13,6 +14,10 @@
         <meta-data
                 android:name="com.google.android.gms.version"
                 android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
         <service
             android:name=".Home"
             android:allowEmbedded="true"
@@ -74,30 +79,6 @@
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
-        </service>
-        <activity
-            android:name=".alerts.AlertList"
-            android:label="Alert List" />
-
-        <activity
-            android:name=".alerts.ErrorsActivity"
-            android:label="Error List" />
-        <activity
-            android:name=".alerts.SnoozeActivity"
-            android:label="Alert Snooze" >
-        </activity>
-        <activity
-            android:name=".alerts.EditAlertActivity"
-            android:label="Edit Alert" >
-        </activity>
-        <service
-            android:name=".alerts.Notifications"
-            android:exported="false" >
-        </service>
-        <service
-            android:name=".alerts.PebbleSync"
-            android:enabled="true"
-            android:exported="true" >
         </service>
 
         <activity

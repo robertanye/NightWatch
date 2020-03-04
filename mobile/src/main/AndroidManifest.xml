@@ -19,7 +19,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Base.Theme.AppCompat">
+        android:theme="@style/NightWatch">
         <meta-data
             android:name="AA_DB_NAME"
             android:value="NightWatch.db" />
@@ -58,7 +58,7 @@
             android:name=".activities.SettingsActivity"
             android:label="Settings" />
         <activity
-            android:name=".LicenseAgreementActivity"
+            android:name=".activities.LicenseAgreementActivity"
             android:label="End User License Agreement" />
         <activity
             android:name=".alerts.EditAlertActivity"
@@ -74,7 +74,7 @@
             android:label="Errors" />
 
         <service
-            android:name=".DataCollectionService"
+            android:name=".services.DataCollectionService"
             android:exported="true" />
         <service
             android:name=".alerts.Notifications"
@@ -86,16 +86,16 @@
             android:name=".alerts.MissedReadingService"
             android:exported="true" />
         <service
-            android:name=".PebbleSync"
+            android:name=".watch.PebbleSync"
             android:exported="true" />
         <service
             android:name=".integration.dexdrip.IntentService"
             android:exported="false" />
         <service
-            android:name=".WidgetUpdateService"
+            android:name=".services.WidgetUpdateService"
             android:exported="true" />
         <service
-            android:name=".WatchUpdaterService"
+            android:name=".services.WatchUpdaterService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -115,12 +115,13 @@
         </receiver>
         <receiver
             android:name=".integration.dexdrip.DataReceiver"
-            android:exported="true">
+            android:exported="true"
+            android:permission="TODO">
             <intent-filter>
                 <action android:name="com.eveningoutpost.dexdrip.BgEstimate" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".NightWatchWidget">
+        <receiver android:name=".watch.NightWatchWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -129,7 +130,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/night_watch_widget_small_info" />
         </receiver>
-        <receiver android:name=".NightWatchWidgetWide">
+        <receiver android:name=".watch.NightWatchWidgetWide">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -143,7 +144,7 @@
             android:name="io.fabric.ApiKey"
             android:value="a2fa9c3c2588147358920450ad4ddfa18d187884" />
 
-        <activity android:name=".activities.About"></activity>
+        <activity android:name=".activities.About" />
     </application>
 
 </manifest>

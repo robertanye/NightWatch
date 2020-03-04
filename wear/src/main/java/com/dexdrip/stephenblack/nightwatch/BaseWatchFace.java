@@ -32,6 +32,7 @@ import com.ustwo.clockwise.WatchShape;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import lecho.lib.hellocharts.view.LineChartView;
 
@@ -40,7 +41,6 @@ import lecho.lib.hellocharts.view.LineChartView;
  */
 public  abstract class BaseWatchFace extends WatchFace implements SharedPreferences.OnSharedPreferenceChangeListener {
     public final static IntentFilter INTENT_FILTER;
-    public static final long[] vibratePattern = {0,400,300,400,300,400};
     public TextView mTime, mSgv, mDirection, mTimestamp, mUploaderBattery, mDelta, mRaw;
     public RelativeLayout mRelativeLayout;
     public LinearLayout mLinearLayout;
@@ -53,7 +53,6 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
     public int pointSize = 2;
     public boolean singleLine = false;
     public boolean layoutSet = false;
-    public int missed_readings_alert_id = 818;
     public BgGraphBuilder bgGraphBuilder;
     public LineChartView chart;
     public double datetime;
@@ -75,10 +74,10 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
     @Override
     public void onCreate() {
         super.onCreate();
-        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+        Display display = ((WindowManager) Objects.requireNonNull(getSystemService(Context.WINDOW_SERVICE)))
                 .getDefaultDisplay();
         display.getSize(displaySize);
-        wakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Clock");
+        wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(Context.POWER_SERVICE))).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "nightwatch:Clock");
 
         specW = View.MeasureSpec.makeMeasureSpec(displaySize.x,
                 View.MeasureSpec.EXACTLY);
@@ -96,7 +95,7 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
     }
 
     public void performViewSetup() {
-        final WatchViewStub stub = (WatchViewStub) layoutView.findViewById(R.id.watch_view_stub);
+        final WatchViewStub stub = layoutView.findViewById(R.id.watch_view_stub);
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
 
         messageReceiver = new MessageReceiver();
@@ -106,16 +105,16 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                mTime = (TextView) stub.findViewById(R.id.watch_time);
-                mSgv = (TextView) stub.findViewById(R.id.sgv);
-                mDirection = (TextView) stub.findViewById(R.id.direction);
-                mTimestamp = (TextView) stub.findViewById(R.id.timestamp);
-                mRaw = (TextView) stub.findViewById(R.id.raw);
-                mUploaderBattery = (TextView) stub.findViewById(R.id.uploader_battery);
-                mDelta = (TextView) stub.findViewById(R.id.delta);
-                mRelativeLayout = (RelativeLayout) stub.findViewById(R.id.main_layout);
-                mLinearLayout = (LinearLayout) stub.findViewById(R.id.secondary_layout);
-                chart = (LineChartView) stub.findViewById(R.id.chart);
+                mTime = stub.findViewById(R.id.watch_time);
+                mSgv = stub.findViewById(R.id.sgv);
+                mDirection = stub.findViewById(R.id.direction);
+                mTimestamp = stub.findViewById(R.id.timestamp);
+                mRaw = stub.findViewById(R.id.raw);
+                mUploaderBattery = stub.findViewById(R.id.uploader_battery);
+                mDelta = stub.findViewById(R.id.delta);
+                mRelativeLayout = stub.findViewById(R.id.main_layout);
+                mLinearLayout = stub.findViewById(R.id.secondary_layout);
+                chart = stub.findViewById(R.id.chart);
                 layoutSet = true;
                 showAgoRawBatt();
                 mRelativeLayout.measure(specW, specH);
@@ -197,7 +196,7 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
     public class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            DataMap dataMap = DataMap.fromBundle(intent.getBundleExtra("data"));
+            DataMap dataMap = DataMap.fromBundle(Objects.requireNonNull(intent.getBundleExtra("data")));
             if (layoutSet) {
                 wakeLock.acquire(50);
                 sgvLevel = dataMap.getLong("sgvLevel");
@@ -247,13 +246,13 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
                 (sharedPrefs.getBoolean("showRawNoise", true) && sgvString.equals("???"))
                 ) {
             mRaw.setVisibility(View.VISIBLE);
-            mRaw.setText("R: " + rawString);
+            mRaw.setText(getString(R.string.raw_reading,rawString));
             mTimestamp.setText(readingAge(true));
-            mUploaderBattery.setText("U: " + batteryString + "%");
+            mUploaderBattery.setText(getString(R.string.uploader_battery,batteryString));
         } else {
             mRaw.setVisibility(View.GONE);
             mTimestamp.setText(readingAge(false));
-            mUploaderBattery.setText("Uploader: " + batteryString + "%");
+            mUploaderBattery.setText(getString(R.string.uploader,batteryString));
         }
     }
 

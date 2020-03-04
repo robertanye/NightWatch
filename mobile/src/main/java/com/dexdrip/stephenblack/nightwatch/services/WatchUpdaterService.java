@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch;
+package com.dexdrip.stephenblack.nightwatch.services;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.dexdrip.stephenblack.nightwatch.watch.PebbleSync;
+import com.dexdrip.stephenblack.nightwatch.SendToDataLayerThread;
 import com.dexdrip.stephenblack.nightwatch.model.Bg;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;

@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch;
+package com.dexdrip.stephenblack.nightwatch.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,18 +6,14 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.dexdrip.stephenblack.nightwatch.Cal;
+import com.dexdrip.stephenblack.nightwatch.watch.PebbleEndpoint;
+import com.dexdrip.stephenblack.nightwatch.watch.PebbleEndpointInterface;
 import com.dexdrip.stephenblack.nightwatch.model.Bg;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.Objects;
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import retrofit2.Retrofit;
@@ -31,8 +27,8 @@ public class Rest {
     private Context mContext;
     private String mUrl;
     private static final String UNITS = "mgdl";
-    SharedPreferences prefs;
-    PowerManager.WakeLock wakeLock;
+    private SharedPreferences prefs;
+    private PowerManager.WakeLock wakeLock;
 
 
     Rest(Context context) {
@@ -40,11 +36,12 @@ public class Rest {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         mUrl = prefs.getString("dex_collection_method", "https://{yoursite}.herokuapp.com");
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        this.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "rest wakelock");
-        wakeLock.acquire();
+        assert powerManager != null;
+        this.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NW:rest wakelock");
+        wakeLock.acquire(10*60*1000L /*10 minutes*/);
     }
 
-    public boolean getBg(int count) {
+    boolean getBg(int count) {
         if (!prefs.getBoolean("nightscout_poll", false) && mUrl.compareTo("") != 0 && mUrl.compareTo("https://{yoursite}herokuapp.com") != 0) {
             if(wakeLock != null && wakeLock.isHeld()) { wakeLock.release(); }
             return false;
@@ -62,6 +59,7 @@ public class Rest {
 
 
             double slope = 0, intercept = 0, scale = 0;
+            assert Bgs != null;
             if (Bgs.cals != null && Bgs.cals.size() != 0){
                 Cal cal = Bgs.cals.get(0);
                 slope = cal.slope;
@@ -90,7 +88,7 @@ public class Rest {
             if(wakeLock != null && wakeLock.isHeld()) { wakeLock.release(); }
             return newData;
         } catch (Exception e) {
-            Log.d("REST CALL ERROR: ", e.getMessage());
+            Log.d("REST CALL ERROR: ", Objects.requireNonNull(e.getMessage()));
             e.printStackTrace();
             if(wakeLock != null && wakeLock.isHeld()) { wakeLock.release(); }
             return false;

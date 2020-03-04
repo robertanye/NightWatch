@@ -129,35 +129,35 @@ public class EditAlertActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         mContext = this;
 
-        viewHeader = (TextView) findViewById(R.id.view_alert_header);
+        viewHeader = findViewById(R.id.view_alert_header);
 
-        buttonSave = (Button)findViewById(R.id.edit_alert_save);
-        buttonRemove = (Button)findViewById(R.id.edit_alert_remove);
-        buttonTest = (Button)findViewById(R.id.edit_alert_test);
-        buttonalertMp3 = (Button)findViewById(R.id.Button_alert_mp3_file);
-        buttonPreSnooze = (Button)findViewById(R.id.edit_alert_pre_snooze);
-
-
-        alertText = (EditText) findViewById(R.id.edit_alert_text);
-        alertThreshold = (EditText) findViewById(R.id.edit_alert_threshold);
-        alertMp3File = (EditText) findViewById(R.id.edit_alert_mp3_file);
-
-        checkboxAllDay = (CheckBox) findViewById(R.id.check_alert_time);
-        checkboxVibrate = (CheckBox) findViewById(R.id.check_vibrate);
-
-        layoutTimeBetween = (LinearLayout) findViewById(R.id.time_between);
-        timeInstructions = (LinearLayout) findViewById(R.id.time_instructions);
-        timeInstructionsStart = (TextView) findViewById(R.id.time_instructions_start);
-        timeInstructionsEnd = (TextView) findViewById(R.id.time_instructions_end);
+        buttonSave = findViewById(R.id.edit_alert_save);
+        buttonRemove = findViewById(R.id.edit_alert_remove);
+        buttonTest = findViewById(R.id.edit_alert_test);
+        buttonalertMp3 = findViewById(R.id.Button_alert_mp3_file);
+        buttonPreSnooze = findViewById(R.id.edit_alert_pre_snooze);
 
 
-        viewTimeStart = (TextView) findViewById(R.id.view_alert_time_start);
-        viewTimeEnd = (TextView) findViewById(R.id.view_alert_time_end);
-        editSnooze = (EditText) findViewById(R.id.edit_snooze);
-        reraise = (EditText) findViewById(R.id.reraise);
+        alertText = findViewById(R.id.edit_alert_text);
+        alertThreshold = findViewById(R.id.edit_alert_threshold);
+        alertMp3File = findViewById(R.id.edit_alert_mp3_file);
 
-        viewAlertOverrideText = (TextView) findViewById(R.id.view_alert_override_silent);
-        checkboxAlertOverride = (CheckBox) findViewById(R.id.check_override_silent);
+        checkboxAllDay = findViewById(R.id.check_alert_time);
+        checkboxVibrate = findViewById(R.id.check_vibrate);
+
+        layoutTimeBetween = findViewById(R.id.time_between);
+        timeInstructions = findViewById(R.id.time_instructions);
+        timeInstructionsStart = findViewById(R.id.time_instructions_start);
+        timeInstructionsEnd = findViewById(R.id.time_instructions_end);
+
+
+        viewTimeStart = findViewById(R.id.view_alert_time_start);
+        viewTimeEnd = findViewById(R.id.view_alert_time_end);
+        editSnooze = findViewById(R.id.edit_snooze);
+        reraise = findViewById(R.id.reraise);
+
+        viewAlertOverrideText = findViewById(R.id.view_alert_override_silent);
+        checkboxAlertOverride = findViewById(R.id.check_override_silent);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         addListenerOnButtons();
 
@@ -601,6 +601,8 @@ public class EditAlertActivity extends BaseActivity {
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             if (uri != null) {
@@ -678,10 +680,7 @@ public class EditAlertActivity extends BaseActivity {
             return false;
         }
         Ringtone ringtone = RingtoneManager.getRingtone(context, Uri.parse(path));
-        if(ringtone == null) {
-            return false;
-        }
-        return true;
+        return ringtone != null;
     }
 
     public String shortPath(String path) {
@@ -711,10 +710,10 @@ public class EditAlertActivity extends BaseActivity {
                     final Dialog d = new Dialog(mContext);
                     d.setTitle("Default Snooze");
                     d.setContentView(R.layout.snooze_picker);
-                    Button b1 = (Button) d.findViewById(R.id.button1);
-                    Button b2 = (Button) d.findViewById(R.id.button2);
+                    Button b1 = d.findViewById(R.id.button1);
+                    Button b2 = d.findViewById(R.id.button2);
 
-                    final NumberPicker snoozeValue = (NumberPicker) d.findViewById(R.id.numberPicker1);
+                    final NumberPicker snoozeValue = d.findViewById(R.id.numberPicker1);
 
 
                     SnoozeActivity.SetSnoozePickerValues(snoozeValue, typeOfAlert, defaultSnooze);
@@ -751,11 +750,11 @@ public class EditAlertActivity extends BaseActivity {
                 final Dialog d = new Dialog(mContext);
                 d.setTitle("Snooze this alert...");
                 d.setContentView(R.layout.snooze_picker);
-                Button b1 = (Button) d.findViewById(R.id.button1);
-                Button b2 = (Button) d.findViewById(R.id.button2);
+                Button b1 = d.findViewById(R.id.button1);
+                Button b2 = d.findViewById(R.id.button2);
                 b1.setText("pre-Snooze");
 
-                final NumberPicker snoozeValue = (NumberPicker) d.findViewById(R.id.numberPicker1);
+                final NumberPicker snoozeValue = d.findViewById(R.id.numberPicker1);
 
                 SnoozeActivity.SetSnoozePickerValues(snoozeValue, typeOfAlert, defaultSnooze);
                 b1.setOnClickListener(new View.OnClickListener() {

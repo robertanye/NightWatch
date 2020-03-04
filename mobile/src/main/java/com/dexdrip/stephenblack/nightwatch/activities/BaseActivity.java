@@ -21,8 +21,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private String menu_name = "Home Screen";
 
-
-
     @Override
     public void setSupportActionBar(@Nullable Toolbar toolbar) {
         super.setSupportActionBar(toolbar);
@@ -39,7 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     protected void onResume(){
         super.onResume();
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), menu_name, this);
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, findViewById(R.id.drawer_layout), menu_name, this);
 
     }
 

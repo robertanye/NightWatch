@@ -49,10 +49,10 @@ public class ErrorListAdapter  extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.item_user_error, null);
         }
-        LinearLayout row = (LinearLayout) view.findViewById(R.id.errorRow);
-        TextView shortText = (TextView) view.findViewById(R.id.errorShort);
-        TextView longText = (TextView) view.findViewById(R.id.errorLong);
-        TextView timestamp = (TextView) view.findViewById(R.id.errorTimestamp);
+        LinearLayout row = view.findViewById(R.id.errorRow);
+        TextView shortText = view.findViewById(R.id.errorShort);
+        TextView longText = view.findViewById(R.id.errorLong);
+        TextView timestamp = view.findViewById(R.id.errorTimestamp);
 
         UserError error = list.get(position);
 

@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -20,27 +19,24 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.activeandroid.ActiveAndroid;
-import com.crashlytics.android.Crashlytics;
-import com.dexdrip.stephenblack.nightwatch.model.Bg;
 import com.dexdrip.stephenblack.nightwatch.BgGraphBuilder;
-import com.dexdrip.stephenblack.nightwatch.LicenseAgreementActivity;
+import com.dexdrip.stephenblack.nightwatch.services.DataCollectionService;
 import com.dexdrip.stephenblack.nightwatch.R;
-import com.dexdrip.stephenblack.nightwatch.WatchUpdaterService;
+import com.dexdrip.stephenblack.nightwatch.services.WatchUpdaterService;
 import com.dexdrip.stephenblack.nightwatch.integration.dexdrip.Intents;
+import com.dexdrip.stephenblack.nightwatch.model.Bg;
 import com.dexdrip.stephenblack.nightwatch.utils.IdempotentMigrations;
-import com.dexdrip.stephenblack.nightwatch.DataCollectionService;
 
 import java.util.Date;
 
-import io.fabric.sdk.android.Fabric;
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ViewportChangeListener;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewLineChartView;
 
-import static android.preference.PreferenceManager.*;
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static android.preference.PreferenceManager.setDefaultValues;
 
 
 public class Home extends BaseActivity {
@@ -49,10 +45,7 @@ public class Home extends BaseActivity {
     private PreviewLineChartView previewChart;
     Viewport tempViewport = new Viewport();
     Viewport holdViewport = new Viewport();
-    public float left;
     public float right;
-    public float top;
-    public float bottom;
     public boolean updateStuff;
     public boolean updatingPreviewViewport = false;
     public boolean updatingChartViewport = false;
@@ -81,7 +74,6 @@ public class Home extends BaseActivity {
         setDefaultValues(this, R.xml.pref_other, false);
         setDefaultValues(this, R.xml.pref_bg_notification, false);
         setDefaultValues(this, R.xml.pref_watch_integration, false);
-        Fabric.with(this, new Crashlytics());
 
 
 
@@ -94,30 +86,23 @@ public class Home extends BaseActivity {
         startService(new Intent(getApplicationContext(), DataCollectionService.class));
 
 
-        preferenceChangeListener = new OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                invalidateOptionsMenu();
-            }
-        };
+        preferenceChangeListener = (sharedPreferences, key) -> invalidateOptionsMenu();
 
         prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Intent intent = new Intent();
-            String packageName = getPackageName();
-            Log.d(this.getClass().getName(), "Maybe ignoring battery optimization");
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            if (!pm.isIgnoringBatteryOptimizations(packageName) &&
-                    !prefs.getBoolean("requested_ignore_battery_optimizations", false)) {
+        Intent intent = new Intent();
+        String packageName = getPackageName();
+        Log.d(this.getClass().getName(), "Maybe ignoring battery optimization");
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (!pm.isIgnoringBatteryOptimizations(packageName) &&
+                !prefs.getBoolean("requested_ignore_battery_optimizations", false)) {
 
-                Log.d(this.getClass().getName(), "Requesting ignore battery optimization");
+            Log.d(this.getClass().getName(), "Requesting ignore battery optimization");
 
-                prefs.edit().putBoolean("requested_ignore_battery_optimizations", true).apply();
-                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.parse("package:" + packageName));
-                startActivity(intent);
-            }
+            prefs.edit().putBoolean("requested_ignore_battery_optimizations", true).apply();
+            intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(Uri.parse("package:" + packageName));
+            startActivity(intent);
         }
 
     }
@@ -200,10 +185,10 @@ public class Home extends BaseActivity {
     public void setupCharts() {
         bgGraphBuilder  = new BgGraphBuilder(this);
         updateStuff = false;
-        chart = (LineChartView) findViewById(R.id.chart);
+        chart = findViewById(R.id.chart);
         chart.setZoomType(ZoomType.HORIZONTAL);
 
-        previewChart = (PreviewLineChartView) findViewById(R.id.chart_preview);
+        previewChart = findViewById(R.id.chart_preview);
         previewChart.setZoomType(ZoomType.HORIZONTAL);
 
         chart.setLineChartData(bgGraphBuilder.lineData());
@@ -265,8 +250,8 @@ public class Home extends BaseActivity {
     }
 
     public void displayCurrentInfo() {
-        final TextView currentBgValueText = (TextView) findViewById(R.id.currentBgValueRealTime);
-        final TextView notificationText = (TextView) findViewById(R.id.notices);
+        final TextView currentBgValueText = findViewById(R.id.currentBgValueRealTime);
+        final TextView notificationText = findViewById(R.id.notices);
         if ((currentBgValueText.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) {
             currentBgValueText.setPaintFlags(currentBgValueText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         }
@@ -276,13 +261,18 @@ public class Home extends BaseActivity {
             //TODO: Adrian: Remove raw string?
             if ( prefs.getBoolean("showRaw",false) ) {
                 // show age and raw readings
-                notificationText.setText(lastBgreading.readingAge() + "\n" + Bg.threeRaw((prefs.getString("units", "mgdl").equals("mgdl"))));
+                notificationText.setText(getString(R.string.bg_age_display,
+                        lastBgreading.readingAge(),
+                        Bg.threeRaw((prefs.getString("units", "mgdl").equals("mgdl")))));
             } else {
                 // show age and the delta
-                notificationText.setText(lastBgreading.readingAge() + "\n" + bgGraphBuilder.unitizedDeltaString(true,true) );
+                notificationText.setText(getString(R.string.bg_age_display,
+                        lastBgreading.readingAge(),
+                        bgGraphBuilder.unitizedDeltaString(true,true)));
             }
 
-            currentBgValueText.setText(bgGraphBuilder.unitized_string(lastBgreading.sgv_double()) + " " + lastBgreading.slopeArrow());
+            currentBgValueText.setText(getString(R.string.bg_value_display,
+                    lastBgreading.sgv_double(),lastBgreading.slopeArrow()));
 
             if ((new Date().getTime()) - (60000 * 16) - lastBgreading.datetime > 0) {
                 notificationText.setTextColor(Color.parseColor("#C30909"));

@@ -66,11 +66,6 @@ public class MissedReadingService extends IntentService {
         AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
         long wakeTime = calendar.getTimeInMillis() + alarmIn;
         PendingIntent serviceIntent = PendingIntent.getService(this, 0, new Intent(this, this.getClass()), 0);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarm.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeTime, serviceIntent);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarm.setExact(AlarmManager.RTC_WAKEUP, wakeTime, serviceIntent);
-        } else
-            alarm.set(AlarmManager.RTC_WAKEUP, wakeTime, serviceIntent);
+        alarm.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeTime, serviceIntent);
     }
 }

@@ -56,7 +56,7 @@ public class AlertList extends BaseActivity {
     HashMap<String, String> createAlertMap(AlertType alert) {
         HashMap<String, String> map = new HashMap<>();
         String overrideSilentMode = "Override Silent Mode";
-        if(alert.override_silent_mode == false) {
+        if(!alert.override_silent_mode) {
             overrideSilentMode = "No Alert in Silent Mode";
         }
 
@@ -116,9 +116,9 @@ public class AlertList extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getApplicationContext();
-        listViewLow = (ListView) findViewById(R.id.listView_low);
-        listViewHigh = (ListView) findViewById(R.id.listView_high);
-        listViewMissed = (ListView) findViewById(R.id.listView_missed);
+        listViewLow = findViewById(R.id.listView_low);
+        listViewHigh = findViewById(R.id.listView_high);
+        listViewMissed = findViewById(R.id.listView_missed);
         prefs =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         doMgdl = (prefs.getString("units", "mgdl").compareTo("mgdl") == 0);
 
@@ -131,9 +131,9 @@ public class AlertList extends BaseActivity {
 
 
     public void addListenerOnButton() {
-        createLowAlert = (Button)findViewById(R.id.button_create_low);
-        createHighAlert = (Button)findViewById(R.id.button_create_high);
-        createMissedAlert = (Button)findViewById(R.id.button_create_missed);
+        createLowAlert = findViewById(R.id.button_create_low);
+        createHighAlert = findViewById(R.id.button_create_high);
+        createMissedAlert = findViewById(R.id.button_create_missed);
 
         createLowAlert.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -165,9 +165,10 @@ public class AlertList extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult called ");
         if (requestCode == ADD_ALERT || requestCode == EDIT_ALERT) {
-            if(resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 Log.d(TAG, "onActivityResult called invalidating...");
                 FillLists();
             }

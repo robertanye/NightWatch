@@ -15,7 +15,7 @@
             android:id="@+id/alertName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/textview"
             android:layout_weight="1"
               android:gravity="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"  />
@@ -24,7 +24,7 @@
             android:id="@+id/alertThreshold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/textview"
             android:layout_weight="1"
             android:gravity="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
@@ -33,7 +33,7 @@
             android:id="@+id/alertTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/textview"
             android:layout_weight="1"
             android:gravity="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"   />
@@ -48,7 +48,7 @@
           android:id="@+id/alertOverrideSilent"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="TextView"
+          android:text="@string/textview"
           android:gravity="center"
           android:layout_weight="1"
           android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"  />
@@ -57,7 +57,7 @@
             android:id="@+id/alertMp3File"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/textview"
             android:gravity="center"
             android:layout_weight="1"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"  />

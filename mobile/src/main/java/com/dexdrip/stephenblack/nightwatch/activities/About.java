@@ -18,11 +18,11 @@ public class About extends AppCompatActivity  {
         setContentView(R.layout.activity_about);
 
         // Update the Version Number and Name
-        final TextView about = (TextView) findViewById(R.id.About);
+        final TextView about = findViewById(R.id.About);
         about.setText("About NightWatch");
-        final TextView versionName = (TextView) findViewById(R.id.versionName);
+        final TextView versionName = findViewById(R.id.versionName);
         versionName.setText( "Version Number: " + BuildConfig.VERSION_NAME);
-        final TextView versionNumber = (TextView) findViewById(R.id.versionNumber);
-        versionNumber.setText( "Version Code: " + Integer.toString(BuildConfig.VERSION_CODE));
+        final TextView versionNumber = findViewById(R.id.versionNumber);
+        versionNumber.setText( "Version Code: " + BuildConfig.VERSION_CODE);
     }
 }

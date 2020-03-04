@@ -1,10 +1,12 @@
 package com.dexdrip.stephenblack.nightwatch.alerts;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -18,39 +20,64 @@ import com.dexdrip.stephenblack.nightwatch.model.UserError.Log;
 import com.dexdrip.stephenblack.nightwatch.R;
 
 import java.util.Date;
+import java.util.Objects;
 
 import static com.dexdrip.stephenblack.nightwatch.model.AlertType.*;
 
 public class AlertPlayer {
 
-    static AlertPlayer singletone;
+    private static AlertPlayer singleton;
 
     private final static String TAG = AlertPlayer.class.getSimpleName();
     private MediaPlayer mediaPlayer;
-    int volumeBeforeAlert;
-    int volumeForThisAlert;
+    private int volumeBeforeAlert;
+    private int volumeForThisAlert;
 
-    final static int ALERT_PROFILE_HIGH = 1;
-    final static int ALERT_PROFILE_ASCENDING = 2;
-    final static int ALERT_PROFILE_MEDIUM = 3;
-    final static int ALERT_PROFILE_VIBRATE_ONLY = 4;
-    final static int ALERT_PROFILE_SILENT = 5;
+    private final static int ALERT_PROFILE_HIGH = 1;
+    private final static int ALERT_PROFILE_ASCENDING = 2;
+    private final static int ALERT_PROFILE_MEDIUM = 3;
+    private final static int ALERT_PROFILE_VIBRATE_ONLY = 4;
+    private final static int ALERT_PROFILE_SILENT = 5;
 
-    final static int  MAX_VIBRATING = 2;
-    final static int  MAX_ASCENDING = 5;
+    private final static int  MAX_VIBRATING = 2;
+    private final static int  MAX_ASCENDING = 5;
+    private static final String NW_AlertChannel = "AlertPlayer Channel";
+
+    NotificationChannel mChannel;
+
+    public AlertPlayer() {
 
 
+    }
     public static AlertPlayer getPlayer() {
-        if(singletone == null) {
+        if(singleton == null) {
             Log.i(TAG,"getPlayer: Creating a new AlertPlayer");
-            singletone = new AlertPlayer();
+            singleton = new AlertPlayer();
         } else {
             Log.i(TAG,"getPlayer: Using existing AlertPlayer");
         }
-        return singletone;
+        return singleton;
     }
 
+    private synchronized void checkForValidChannel( Context ctx ) {
+
+        NotificationManager mNotifyMgr = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        assert mNotifyMgr != null;
+        mChannel = mNotifyMgr.getNotificationChannel(NW_AlertChannel);
+        if (mChannel == null) {
+            String id = NW_AlertChannel;
+            String title = "Alert Notifications Channel";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            mChannel = new NotificationChannel(id, title, importance);
+            mChannel.enableVibration(true);
+            mChannel.setLightColor(Color.RED);
+            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            mNotifyMgr.createNotificationChannel(mChannel);
+        }
+
+    }
     public synchronized  void startAlert(Context ctx, boolean trendingToAlertEnd, AlertType newAlert, String bgValue )  {
+        checkForValidChannel(ctx);
         Log.d(TAG, "startAlert called, Threadid " + Thread.currentThread().getId());
         if (trendingToAlertEnd) {
             Log.d(TAG,"startAlert: This alert is trending to it's end will not do anything");
@@ -64,8 +91,9 @@ public class AlertPlayer {
         Vibrate(ctx, newAlert, bgValue, newAlert.override_silent_mode, 0);
     }
 
-    public synchronized void stopAlert(Context ctx, boolean ClearData, boolean clearIfSnoozeFinished) {
+    synchronized void stopAlert(Context ctx, boolean ClearData, boolean clearIfSnoozeFinished) {
 
+        checkForValidChannel(ctx);
         Log.d(TAG, "stopAlert: stop called ClearData " + ClearData + "  ThreadID " + Thread.currentThread().getId());
         if (ClearData) {
             ActiveBgAlert.ClearData();
@@ -81,7 +109,8 @@ public class AlertPlayer {
         }
     }
 
-    public synchronized  void Snooze(Context ctx, int repeatTime) {
+    synchronized  void Snooze(Context ctx, int repeatTime) {
+        checkForValidChannel(ctx);
         Log.i(TAG, "Snooze called repeatTime = " + repeatTime);
         stopAlert(ctx, false, false);
         ActiveBgAlert activeBgAlert = ActiveBgAlert.getOnly();
@@ -92,7 +121,8 @@ public class AlertPlayer {
         activeBgAlert.snooze(repeatTime);
     }
 
-    public synchronized  void PreSnooze(Context ctx, String uuid, int repeatTime) {
+    synchronized  void PreSnooze(Context ctx, String uuid, int repeatTime) {
+        checkForValidChannel(ctx);
         Log.i(TAG, "PreSnooze called repeatTime = "+ repeatTime);
         stopAlert(ctx, true, false);
         ActiveBgAlert.Create(uuid, true, new Date().getTime() + repeatTime * 60000);
@@ -104,9 +134,10 @@ public class AlertPlayer {
         activeBgAlert.snooze(repeatTime);
     }
 
- // Check the state and alrarm if needed
-    public void ClockTick(Context ctx, boolean trendingToAlertEnd, String bgValue)
+ // Check the state and alarm if needed
+ void ClockTick(Context ctx, boolean trendingToAlertEnd, String bgValue)
     {
+        checkForValidChannel(ctx);
         if (trendingToAlertEnd) {
             Log.d(TAG,"ClockTick: This alert is trending to it's end will not do anything");
             return;
@@ -136,9 +167,10 @@ public class AlertPlayer {
     }
 
     private void PlayFile(final Context ctx, String FileName, float VolumeFrac) {
+        checkForValidChannel(ctx);
         Log.i(TAG, "PlayFile: called FileName = " + FileName);
         if(mediaPlayer != null) {
-            Log.i(TAG, "ERROR, PlayFile:going to leak a mediaplayer !!!");
+            Log.e(TAG, "ERROR, PlayFile:going to leak a mediaplayer !!!");
         }
         if(FileName != null && FileName.length() > 0) {
             mediaPlayer = MediaPlayer.create(ctx, Uri.parse(FileName), null);
@@ -149,21 +181,20 @@ public class AlertPlayer {
         }
         if(mediaPlayer != null) {
             AudioManager manager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
+            assert manager != null;
             int maxVolume = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
             volumeBeforeAlert = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
             volumeForThisAlert = (int)(maxVolume * VolumeFrac);
             manager.setStreamVolume(AudioManager.STREAM_MUSIC, volumeForThisAlert, 0);
 
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    Log.i(TAG, "PlayFile: onCompletion called (finished playing) ");
-                    AudioManager manager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
-                    int currentVolume = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                    if(volumeForThisAlert == currentVolume) {
-                        // If the user has changed the volume, don't change it again.
-                        manager.setStreamVolume(AudioManager.STREAM_MUSIC, volumeBeforeAlert, 0);
-                    }
+            mediaPlayer.setOnCompletionListener(mp -> {
+                Log.i(TAG, "PlayFile: onCompletion called (finished playing) ");
+                AudioManager manager1 = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
+                assert manager1 != null;
+                int currentVolume = manager1.getStreamVolume(AudioManager.STREAM_MUSIC);
+                if(volumeForThisAlert == currentVolume) {
+                    // If the user has changed the volume, don't change it again.
+                    manager1.setStreamVolume(AudioManager.STREAM_MUSIC, volumeBeforeAlert, 0);
                 }
             });
             Log.i(TAG, "PlayFile: calling mediaPlayer.start() ");
@@ -228,20 +259,22 @@ public class AlertPlayer {
         }
 
         String title = bgValue + " " + alert.name;
+        checkForValidChannel(ctx);
         String content;
         if ( alert.type == alertType.missed ){
-            content = "Missed Data Alert: " + Bg.last().readingAge();
+            content = "Missed Data Alert: " + Objects.requireNonNull(Bg.last()).readingAge();
         } else {
             content = "BG LEVEL ALERT: " + bgValue;
         }
         Intent intent = new Intent(ctx, SnoozeActivity.class);
 
-        NotificationCompat.Builder  builder = new NotificationCompat.Builder(ctx)
-            .setSmallIcon(R.drawable.ic_action_communication_invert_colors_on)
-            .setContentTitle(title)
-            .setContentText(content)
-            .setContentIntent(notificationIntent(ctx, intent))
-            .setDeleteIntent(snoozeIntent(ctx));
+        NotificationCompat.Builder  builder = new NotificationCompat.Builder(ctx,NW_AlertChannel);
+        builder.setSmallIcon(R.drawable.ic_action_communication_invert_colors_on);
+        builder.setContentTitle(title);
+        builder.setContentText(content);
+        builder.setChannelId(NW_AlertChannel);
+        builder.setContentIntent(notificationIntent(ctx, intent));
+        builder.setDeleteIntent(snoozeIntent(ctx));
         if (profile != ALERT_PROFILE_VIBRATE_ONLY && profile != ALERT_PROFILE_SILENT) {
             if (timeFromStartPlaying >= MAX_VIBRATING) {
                 // Before this, we only vibrate...
@@ -265,12 +298,14 @@ public class AlertPlayer {
             builder.setVibrate(Notifications.vibratePattern);
         }
         NotificationManager mNotifyMgr = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        assert mNotifyMgr != null;
         mNotifyMgr.cancel(Notifications.exportAlertNotificationId);
         mNotifyMgr.notify(Notifications.exportAlertNotificationId, builder.build());
     }
 
     private void notificationDismiss(Context ctx) {
         NotificationManager mNotifyMgr = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        assert mNotifyMgr != null;
         mNotifyMgr.cancel(Notifications.exportAlertNotificationId);
     }
 
@@ -278,9 +313,9 @@ public class AlertPlayer {
     private boolean isLoudPhone(Context ctx) {
         AudioManager am = (AudioManager)ctx.getSystemService(Context.AUDIO_SERVICE);
 
+        assert am != null;
         switch (am.getRingerMode()) {
             case AudioManager.RINGER_MODE_SILENT:
-                return false;
             case AudioManager.RINGER_MODE_VIBRATE:
                 return false;
             case AudioManager.RINGER_MODE_NORMAL:

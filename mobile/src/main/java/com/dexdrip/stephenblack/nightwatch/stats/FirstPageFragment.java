@@ -17,6 +17,7 @@ import com.dexdrip.stephenblack.nightwatch.R;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by adrian on 30/06/15.
@@ -33,7 +34,7 @@ public class FirstPageFragment extends Fragment {
         myView = inflater.inflate(
                 R.layout.stats_general, container, false);
 
-        (new CalculationThread(myView, getActivity().getApplicationContext())).start();
+        (new CalculationThread(myView, requireActivity().getApplicationContext())).start();
 
         return getView();
     }
@@ -101,8 +102,8 @@ public class FirstPageFragment extends Fragment {
                 total = Long.MAX_VALUE;
             }
 
-            TextView rangespercent = (TextView) localView.findViewById(R.id.textView_ranges_percent);
-            TextView rangesabsolute = (TextView) localView.findViewById(R.id.textView_ranges_absolute);
+            TextView rangespercent = localView.findViewById(R.id.textView_ranges_percent);
+            TextView rangesabsolute = localView.findViewById(R.id.textView_ranges_absolute);
 
             updateText(localView, rangespercent, inRange * 100 / total + "%/" + aboveRange * 100 / total + "%/" + belowRange * 100 / total + "%");
             updateText(localView, rangesabsolute, inRange + "/" + aboveRange + "/" + belowRange);
@@ -116,7 +117,7 @@ public class FirstPageFragment extends Fragment {
             });
             if (bgList.size() > 0) {
                 double median = bgList.get(bgList.size() / 2).calculated_value;
-                TextView medianView = (TextView) localView.findViewById(R.id.textView_median);
+                TextView medianView = localView.findViewById(R.id.textView_median);
 
                 if (mgdl) {
                     updateText(localView, medianView, Math.round(median * 10) / 10d + " mg/dl");
@@ -134,7 +135,7 @@ public class FirstPageFragment extends Fragment {
                 }
                 mean = mean/len;
 
-                TextView meanView = (TextView) localView.findViewById(R.id.textView_mean);
+                TextView meanView = localView.findViewById(R.id.textView_mean);
                 //update mean
                 if (mgdl) {
                     updateText(localView, meanView, (Math.round(mean * 10) / 10d) + " mg/dl");
@@ -144,7 +145,7 @@ public class FirstPageFragment extends Fragment {
                 }
 
                 //update A1c
-                TextView a1cView = (TextView) localView.findViewById(R.id.textView_a1c);
+                TextView a1cView = localView.findViewById(R.id.textView_a1c);
                 int a1c_ifcc = (int) Math.round(((mean + 46.7) / 28.7 - 2.15) * 10.929);
                 double a1c_dcct = Math.round(10 * (mean + 46.7) / 28.7) / 10d;
                 updateText(localView, a1cView, a1c_ifcc + " mmol/mol\n" + a1c_dcct + " %");
@@ -154,14 +155,14 @@ public class FirstPageFragment extends Fragment {
                     stdev += (bgr.calculated_value - mean) * (bgr.calculated_value - mean) / len;
                 }
                 stdev = Math.sqrt(stdev);
-                TextView stdevView = (TextView) localView.findViewById(R.id.textView_stdev);
+                TextView stdevView = localView.findViewById(R.id.textView_stdev);
                 if (mgdl) {
                     updateText(localView, stdevView, (Math.round(stdev * 10) / 10d) + " mg/dl");
                 } else {
                     updateText(localView, stdevView, (Math.round(stdev * Constants.MGDL_TO_MMOLL * 100) / 100d) + " mmol/l");
                 }
                 // update the CV
-                TextView cvView = (TextView) localView.findViewById(R.id.textView_cv);
+                TextView cvView = localView.findViewById(R.id.textView_cv);
                 double cv = (stdev/mean) * 100 ;
                 updateText(localView, cvView, String.format( "%.2f", cv ) + " %");
             }

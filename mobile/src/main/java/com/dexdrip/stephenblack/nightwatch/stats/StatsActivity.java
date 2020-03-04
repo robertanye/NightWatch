@@ -77,11 +77,11 @@ public class StatsActivity extends BaseActivity {
     }
 
     private void assignButtonNames() {
-        buttonTD = (AppCompatButton) findViewById(R.id.button_stats_today);
-        buttonYTD = (AppCompatButton) findViewById(R.id.button_stats_yesterday);
-        button7d = (AppCompatButton) findViewById(R.id.button_stats_7d);
-        button30d = (AppCompatButton) findViewById(R.id.button_stats_30d);
-        button90d = (AppCompatButton) findViewById(R.id.button_stats_90d);
+        buttonTD = findViewById(R.id.button_stats_today);
+        buttonYTD = findViewById(R.id.button_stats_yesterday);
+        button7d = findViewById(R.id.button_stats_7d);
+        button30d = findViewById(R.id.button_stats_30d);
+        button90d = findViewById(R.id.button_stats_90d);
     }
 
     private void initPagerAndIndicator() {
@@ -90,7 +90,7 @@ public class StatsActivity extends BaseActivity {
                         getSupportFragmentManager());
         // set dots for indication
         indicationDots = new TextView[mStatisticsPageAdapter.getCount()];
-        LinearLayout indicator = (LinearLayout) findViewById(R.id.indicator_layout);
+        LinearLayout indicator = findViewById(R.id.indicator_layout);
         for (int i = 0; i < indicationDots.length; i++) {
             indicationDots[i] = new TextView(this);
             indicationDots[i].setText("\u25EF");
@@ -98,7 +98,7 @@ public class StatsActivity extends BaseActivity {
             indicator.addView(indicationDots[i], new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
         indicationDots[0].setText("\u26AB");
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager = findViewById(R.id.pager);
         mViewPager.setAdapter(mStatisticsPageAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -129,54 +129,29 @@ public class StatsActivity extends BaseActivity {
 
     void setButtonColors() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            ColorStateList csl = new ColorStateList(new int[][]{new int[0]}, new int[]{0xFF606060});
-            buttonTD.setSupportBackgroundTintList(csl);
-            buttonYTD.setSupportBackgroundTintList(csl);
-            button7d.setSupportBackgroundTintList(csl);
-            button30d.setSupportBackgroundTintList(csl);
-            button90d.setSupportBackgroundTintList(csl);
-            csl = new ColorStateList(new int[][]{new int[0]}, new int[]{0xFFAA0000});
-            switch (state) {
-                case TODAY:
-                    buttonTD.setSupportBackgroundTintList(csl);
-                    break;
-                case YESTERDAY:
-                    buttonYTD.setSupportBackgroundTintList(csl);
-                    break;
-                case D7:
-                    button7d.setSupportBackgroundTintList(csl);
-                    break;
-                case D30:
-                    button30d.setSupportBackgroundTintList(csl);
-                    break;
-                case D90:
-                    button90d.setSupportBackgroundTintList(csl);
-                    break;
-            }
-        } else {
-            buttonTD.getBackground().mutate().setColorFilter(null);
-            buttonYTD.getBackground().mutate().setColorFilter(null);
-            button7d.getBackground().mutate().setColorFilter(null);
-            button30d.getBackground().mutate().setColorFilter(null);
-            button90d.getBackground().mutate().setColorFilter(null);
-            switch (state) {
-                case TODAY:
-                    buttonTD.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFAA0000));
-                    break;
-                case YESTERDAY:
-                    buttonYTD.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFAA0000));
-                    break;
-                case D7:
-                    button7d.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFAA0000));
-                    break;
-                case D30:
-                    button30d.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFAA0000));
-                    break;
-                case D90:
-                    button90d.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFAA0000));
-                    break;
-            }
+        ColorStateList csl = new ColorStateList(new int[][]{new int[0]}, new int[]{0xFF606060});
+        buttonTD.setSupportBackgroundTintList(csl);
+        buttonYTD.setSupportBackgroundTintList(csl);
+        button7d.setSupportBackgroundTintList(csl);
+        button30d.setSupportBackgroundTintList(csl);
+        button90d.setSupportBackgroundTintList(csl);
+        csl = new ColorStateList(new int[][]{new int[0]}, new int[]{0xFFAA0000});
+        switch (state) {
+            case TODAY:
+                buttonTD.setSupportBackgroundTintList(csl);
+                break;
+            case YESTERDAY:
+                buttonYTD.setSupportBackgroundTintList(csl);
+                break;
+            case D7:
+                button7d.setSupportBackgroundTintList(csl);
+                break;
+            case D30:
+                button30d.setSupportBackgroundTintList(csl);
+                break;
+            case D90:
+                button90d.setSupportBackgroundTintList(csl);
+                break;
         }
     }
 

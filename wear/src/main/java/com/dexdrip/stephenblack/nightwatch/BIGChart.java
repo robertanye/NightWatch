@@ -36,6 +36,7 @@ import com.ustwo.clockwise.WatchShape;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import lecho.lib.hellocharts.util.Utils;
 import lecho.lib.hellocharts.view.LineChartView;
@@ -45,7 +46,6 @@ import lecho.lib.hellocharts.view.LineChartView;
  */
 public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPreferenceChangeListener {
     public final static IntentFilter INTENT_FILTER;
-    public static final long[] vibratePattern = {0,400,300,400,300,400};
     public TextView mTime, mSgv, mTimestamp, mDelta;
     public RelativeLayout mRelativeLayout;
     //public LinearLayout mLinearLayout;
@@ -58,7 +58,6 @@ public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPre
     public int pointSize = 2;
     public boolean singleLine = false;
     public boolean layoutSet = false;
-    public int missed_readings_alert_id = 818;
     public BgGraphBuilder bgGraphBuilder;
     public LineChartView chart;
     public double datetime;
@@ -82,10 +81,10 @@ public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPre
     @Override
     public void onCreate() {
         super.onCreate();
-        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+        Display display = ((WindowManager) Objects.requireNonNull(getSystemService(Context.WINDOW_SERVICE)))
                 .getDefaultDisplay();
         display.getSize(displaySize);
-        wakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Clock");
+        wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(Context.POWER_SERVICE))).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Nightwatch:Clock");
 
         specW = View.MeasureSpec.makeMeasureSpec(displaySize.x,
                 View.MeasureSpec.EXACTLY);
@@ -95,6 +94,7 @@ public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPre
                 .getDefaultSharedPreferences(this);
         sharedPrefs.registerOnSharedPreferenceChangeListener(this);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        assert inflater != null;
         layoutView = inflater.inflate(R.layout.activity_bigchart, null);
         performViewSetup();
     }
@@ -106,7 +106,7 @@ public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPre
     }
 
     public void performViewSetup() {
-        final WatchViewStub stub = (WatchViewStub) layoutView.findViewById(R.id.watch_view_stub);
+        final WatchViewStub stub = layoutView.findViewById(R.id.watch_view_stub);
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
 
         messageReceiver = new MessageReceiver();
@@ -116,12 +116,12 @@ public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPre
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                mTime = (TextView) stub.findViewById(R.id.watch_time);
-                mSgv = (TextView) stub.findViewById(R.id.sgv);
-                mTimestamp = (TextView) stub.findViewById(R.id.timestamp);
-                mDelta = (TextView) stub.findViewById(R.id.delta);
-                mRelativeLayout = (RelativeLayout) stub.findViewById(R.id.main_layout);
-                chart = (LineChartView) stub.findViewById(R.id.chart);
+                mTime = stub.findViewById(R.id.watch_time);
+                mSgv = stub.findViewById(R.id.sgv);
+                mTimestamp = stub.findViewById(R.id.timestamp);
+                mDelta = stub.findViewById(R.id.delta);
+                mRelativeLayout = stub.findViewById(R.id.main_layout);
+                chart = stub.findViewById(R.id.chart);
                 layoutSet = true;
                 showAgoRawBatt();
                 mRelativeLayout.measure(specW, specH);
@@ -203,7 +203,7 @@ public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPre
     public class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            DataMap dataMap = DataMap.fromBundle(intent.getBundleExtra("data"));
+            DataMap dataMap = DataMap.fromBundle(Objects.requireNonNull(intent.getBundleExtra("data")));
             if (layoutSet) {
                 wakeLock.acquire(50);
                 sgvLevel = dataMap.getLong("sgvLevel");

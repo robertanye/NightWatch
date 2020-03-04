@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch;
+package com.dexdrip.stephenblack.nightwatch.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -12,6 +12,9 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.dexdrip.stephenblack.nightwatch.watch.NightWatchWidget;
+import com.dexdrip.stephenblack.nightwatch.watch.NightWatchWidgetWide;
 
 import java.util.Calendar;
 
@@ -65,9 +68,9 @@ public class WidgetUpdateService extends Service {
                 // Adrian: do we even need to handle non-awake systems? Updating views on non-awake systems seems pointless.
                 alarm.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + retry_in, PendingIntent.getService(this, 0, new Intent(this, WidgetUpdateService.class), 0));
             } else if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                alarm.setExact(alarm.RTC_WAKEUP, calendar.getTimeInMillis() + retry_in, PendingIntent.getService(this, 0, new Intent(this, WidgetUpdateService.class), 0));
+                alarm.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + retry_in, PendingIntent.getService(this, 0, new Intent(this, WidgetUpdateService.class), 0));
             } else {
-                alarm.set(alarm.RTC_WAKEUP, calendar.getTimeInMillis() + retry_in, PendingIntent.getService(this, 0, new Intent(this, WidgetUpdateService.class), 0));
+                alarm.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + retry_in, PendingIntent.getService(this, 0, new Intent(this, WidgetUpdateService.class), 0));
 
             }
         } else {
@@ -77,7 +80,7 @@ public class WidgetUpdateService extends Service {
 
     public void updateCurrentBgInfo() {
         Log.d(TAG, "Sending update flag to widget");
-        int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplicationContext(), NightWatchWidget.class));
+        int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplicationContext(), NightWatchWidget.class));
         Log.d(TAG, "Updating " + ids.length + " widgets");
         if(ids.length > 0) {
             Intent intent = new Intent(this, NightWatchWidget.class);
@@ -85,7 +88,7 @@ public class WidgetUpdateService extends Service {
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
             sendBroadcast(intent);
         }
-        int wide_ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplicationContext(), NightWatchWidgetWide.class));
+        int[] wide_ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplicationContext(), NightWatchWidgetWide.class));
         Log.d(TAG, "Updating " + wide_ids.length + " widgets");
         if(wide_ids.length > 0) {
             Intent intent = new Intent(this, NightWatchWidgetWide.class);

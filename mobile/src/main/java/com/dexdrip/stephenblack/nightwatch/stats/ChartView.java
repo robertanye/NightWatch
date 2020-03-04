@@ -56,12 +56,15 @@ public class ChartView extends View {
                 myPaint.setAntiAlias(true);
                 myPaint.setStyle(Paint.Style.STROKE);
                 myPaint.setTextSize(dp2px(15));
-                canvas.drawText("Not enough data!", dp2px(30), canvas.getHeight() / 2, myPaint);
+                canvas.drawText("Not enough data!", dp2px(30), (float) (getHeight() / 2.0), myPaint);
                 return;
             }
 
-            int side = Math.min((canvas.getWidth() - 10), (canvas.getHeight() - 10));
-            RectF rect = new RectF((canvas.getWidth() - side) / 2, (canvas.getHeight() - side) / 2, (canvas.getWidth() - side) / 2 + side, (canvas.getHeight() - side) / 2 + side);
+            int side = Math.min((getWidth() - 10), (getHeight() - 10));
+            RectF rect = new RectF((float)((getWidth() - side) / 2.0),
+                    (float)((getHeight() - side) / 2.0),
+                    (float)((getWidth() - side) / 2.0 + side),
+                    (float)((getHeight() - side) / 2.0 + side));
             Paint myPaint = new Paint();
             myPaint.setStyle(Paint.Style.FILL_AND_STROKE);
             myPaint.setAntiAlias(true);
@@ -93,8 +96,7 @@ public class ChartView extends View {
     private int dp2px(float dp) {
         DisplayMetrics metrics;
         metrics = resources.getDisplayMetrics();
-        int px = (int) (dp * (metrics.densityDpi / 160f));
-        return px;
+        return (int) (dp * (metrics.densityDpi / 160f));
     }
 
     //return either RangeData or start a calculation if not already started
@@ -140,7 +142,7 @@ public class ChartView extends View {
         return rangeData;
     }
 
-    protected class RangeData {
+    private class RangeData {
         private int inRange;
         private int aboveRange;
         private int belowRange;

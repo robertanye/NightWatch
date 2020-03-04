@@ -1,9 +1,9 @@
 package com.dexdrip.stephenblack.nightwatch.alerts;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
@@ -11,7 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.media.AudioAttributes;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -20,6 +20,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -36,9 +38,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by stephenblack on 11/28/14.
- */
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class Notifications extends IntentService {
     public static final long[] vibratePattern = {0,1000,300,1000,300,1000};
     public static boolean bg_notifications;
@@ -48,11 +48,11 @@ public class Notifications extends IntentService {
     public static boolean bg_sound;
     public static boolean bg_sound_in_silent;
     public static String bg_notification_sound;
+    private static long one_hour_in_milliseconds = (60000*60);
 
     public static boolean calibration_notifications;
     public static boolean calibration_override_silent;
     public static int calibration_snooze;
-    public static int bg_stale_data_limit;
     public static String calibration_notification_sound;
     public static boolean doMgdl;
     public static boolean smart_snoozing;
@@ -63,37 +63,53 @@ public class Notifications extends IntentService {
     PendingIntent wakeIntent;
     private static Handler mHandler = new Handler(Looper.getMainLooper());
 
+
     int currentVolume;
     AudioManager manager;
     Bitmap iconBitmap;
-    Bitmap notifiationBitmap;
+    Bitmap notificationBitmap;
 
-    final int BgNotificationId = 001;
-    final int calibrationNotificationId = 002;
-    final int doubleCalibrationNotificationId = 003;
-    final int extraCalibrationNotificationId = 004;
-    public static final int exportCompleteNotificationId = 005;
+    final int calibrationNotificationId = 2;
+    final int doubleCalibrationNotificationId = 3;
+    final int extraCalibrationNotificationId = 4;
     final int ongoingNotificationId = 8811;
-    public static final int exportAlertNotificationId = 006;
-    public static final int uncleanAlertNotificationId = 007;
-    public static final int missedAlertNotificationId = 010;
-    public static final int riseAlertNotificationId = 011;
-    public static final int failAlertNotificationId = 012;
+    public static final int exportAlertNotificationId = 6;
+    public static final int uncleanAlertNotificationId = 7;
+    public static final int missedAlertNotificationId = 10;
+    public static final int riseAlertNotificationId = 11;
+    public static final int failAlertNotificationId = 12;
 
-    final static int callbackPeriod = 60000 * 1;
-
+    NotificationChannel mChannel;
     SharedPreferences prefs;
+    static final String NW_CHAN_ID = "Notifications Channel";
 
     public Notifications() {
         super("Notifications");
         Log.i("Notifications", "Running Notifications Intent Service");
     }
+    private synchronized void checkForValidChannel( Context ctx ) {
 
+        NotificationManager mNotifyMgr = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        assert mNotifyMgr != null;
+        mChannel = mNotifyMgr.getNotificationChannel(ctx.getString(R.string.channel_name));
+        if (mChannel == null) {
+            String id = ctx.getString(R.string.channel_name); // default_channel_id
+            String title = ctx.getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            mChannel = new NotificationChannel(id, title, importance);
+            mChannel.enableVibration(false);
+            mChannel.setLightColor(Color.RED);
+            //mChannel.setVibrationPattern(vibratePattern);
+            mNotifyMgr.createNotificationChannel(mChannel);
+        }
+
+    }
     @Override
     protected void onHandleIntent(Intent intent) {
         PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NotificationsIntent");
-        wl.acquire();
+        assert pm != null;
+        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NightW:NotificationsIntent");
+        wl.acquire(10*60*1000L /*10 minutes*/);
         Log.d("Notifications", "Running Notifications Intent Service");
         ReadPerfs(getApplicationContext());
         notificationSetter(getApplicationContext());
@@ -140,14 +156,14 @@ public class Notifications extends IntentService {
         Log.d(TAG, "FileBasedNotifications called bgReading.sgv_double() = " + bgReading.sgv_double());
 
 
-        // FIXME: This is to test alterts, not for normal use
+        // FIXME: This is to test alerts, not for normal use
         // new AlertType().testAll( context);
 
         // TODO: tzachi what is the time of this last bgReading
         // If the last reading does not have a sensor, or that sensor was stopped.
         // or the sensor was started, but the 2 hours did not still pass? or there is no calibrations.
         // In all this cases, bgReading.sgv_double() should be 0.
-        if (bgReading != null && bgReading.sgv_double() != 0) {
+        if (bgReading.sgv_double() != 0) {
             AlertType newAlert = AlertType.get_highest_active_alert(context, bgReading.sgv_double());
 
             if (newAlert == null) {
@@ -234,7 +250,7 @@ public class Notifications extends IntentService {
     public void notificationSetter(Context context) {
         ReadPerfs(context);
         BgGraphBuilder bgGraphBuilder = new BgGraphBuilder(context);
-        if (bg_ongoing && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
+        if (bg_ongoing) {
             bgOngoingNotification(bgGraphBuilder);
         }
         if(prefs.getLong("alerts_disabled_until", 0) > new Date().getTime()){
@@ -242,7 +258,7 @@ public class Notifications extends IntentService {
             return;
         }
         FileBasedNotifications(context);
-        Bg.checkForDropAllert(context);
+        Bg.checkForDropAlert(context);
         Bg.checkForRisingAllert(context);
 
         List<Bg> bgReadings = Bg.latest(3);
@@ -263,12 +279,7 @@ public class Notifications extends IntentService {
                 if (wakeIntent != null)
                     alarm.cancel(wakeIntent);
                 wakeIntent = PendingIntent.getService(this, 0, new Intent(this, this.getClass()), 0);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    alarm.setAlarmClock(new AlarmManager.AlarmClockInfo(wakeTime, wakeIntent), wakeIntent);
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    alarm.setExact(AlarmManager.RTC_WAKEUP, wakeTime, wakeIntent);
-                } else
-                    alarm.set(AlarmManager.RTC_WAKEUP, wakeTime, wakeIntent);
+                alarm.setAlarmClock(new AlarmManager.AlarmClockInfo(wakeTime, wakeIntent), wakeIntent);
             }
         }
     }
@@ -288,30 +299,23 @@ public class Notifications extends IntentService {
     }
 
     private Bitmap createWearBitmap(long hours) {
-        return createWearBitmap(System.currentTimeMillis() - 60000 * 60 * hours, System.currentTimeMillis());
+        return createWearBitmap(System.currentTimeMillis() - one_hour_in_milliseconds, System.currentTimeMillis());
     }
 
-    private Notification createExtensionPage(long hours) {
-        return new NotificationCompat.Builder(mContext)
-                .extend(new NotificationCompat.WearableExtender()
-                                .setBackground(createWearBitmap(hours))
-                                .setHintShowBackgroundOnly(true)
-                                .setHintAvoidBackgroundClipping(true)
-                )
-                .build();
-    }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+
     public Notification createOngoingNotification(BgGraphBuilder bgGraphBuilder, Context context) {
         mContext = context;
         ReadPerfs(mContext);
         Intent intent = new Intent(mContext, Home.class);
+
         List<Bg> lastReadings = Bg.latest(2);
         Bg lastReading = null;
         if (lastReadings != null && lastReadings.size() >= 2) {
             lastReading = lastReadings.get(0);
         }
 
+        checkForValidChannel(context);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
         stackBuilder.addParentStack(Home.class);
         stackBuilder.addNextIntent(intent);
@@ -320,9 +324,7 @@ public class Notifications extends IntentService {
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-
-        NotificationCompat.Builder b = new NotificationCompat.Builder(mContext);
-        //b.setOngoing(true);
+        NotificationCompat.Builder b = new NotificationCompat.Builder(mContext,context.getString(R.string.channel_name));
         b.setCategory(NotificationCompat.CATEGORY_STATUS);
         String titleString = lastReading == null ? "BG Reading Unavailable" : (lastReading.displayValue(mContext) + " " + lastReading.slopeArrow());
         b.setContentTitle(titleString)
@@ -336,17 +338,18 @@ public class Notifications extends IntentService {
             iconBitmap = new BgSparklineBuilder(mContext)
                     .setHeight(64)
                     .setWidth(64)
-                    .setStart(System.currentTimeMillis() - 60000 * 60 * 3)
+                    .setStart(System.currentTimeMillis() - one_hour_in_milliseconds*3)
                     .setBgGraphBuilder(bgGraphBuilder)
                     .build();
             b.setLargeIcon(iconBitmap);
+            b.setChannelId(NW_CHAN_ID);
             NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
-            notifiationBitmap = new BgSparklineBuilder(mContext)
+            notificationBitmap = new BgSparklineBuilder(mContext)
                     .setBgGraphBuilder(bgGraphBuilder)
                     .showHighLine()
                     .showLowLine()
                     .build();
-            bigPictureStyle.bigPicture(notifiationBitmap)
+            bigPictureStyle.bigPicture(notificationBitmap)
                     .setSummaryText(deltaString)
                     .setBigContentTitle(titleString);
             b.setStyle(bigPictureStyle);
@@ -356,63 +359,24 @@ public class Notifications extends IntentService {
     }
 
     private void bgOngoingNotification(final BgGraphBuilder bgGraphBuilder) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                NotificationManagerCompat
-                        .from(mContext)
-                        .notify(ongoingNotificationId, createOngoingNotification(bgGraphBuilder, mContext));
-                if (iconBitmap != null)
-                    iconBitmap.recycle();
-                if (notifiationBitmap != null)
-                    notifiationBitmap.recycle();
-            }
+        mHandler.post(() -> {
+            NotificationManagerCompat
+                    .from(mContext)
+                    .notify(ongoingNotificationId, createOngoingNotification(bgGraphBuilder, mContext));
+            if (iconBitmap != null)
+                iconBitmap.recycle();
+            if (notificationBitmap != null)
+                notificationBitmap.recycle();
         });
     }
 
-    private void soundAlert(String soundUri) {
-        manager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-        int maxVolume = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        currentVolume = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
-        manager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0);
-        Uri notification = Uri.parse(soundUri);
-        MediaPlayer player = MediaPlayer.create(mContext, notification);
-
-        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                manager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0);
-            }
-        });
-        player.start();
-    }
-
-    private void clearAllCalibrationNotifications() {
-        notificationDismiss(calibrationNotificationId);
-        notificationDismiss(extraCalibrationNotificationId);
-        notificationDismiss(doubleCalibrationNotificationId);
-    }
-
-    private void calibrationNotificationCreate(String title, String content, Intent intent, int notificationId) {
-        NotificationCompat.Builder mBuilder = notificationBuilder(title, content, intent);
-        mBuilder.setVibrate(vibratePattern);
-        mBuilder.setLights(0xff00ff00, 300, 1000);
-        if(calibration_override_silent) {
-            mBuilder.setSound(Uri.parse(calibration_notification_sound), AudioAttributes.USAGE_ALARM);
-        } else {
-            mBuilder.setSound(Uri.parse(calibration_notification_sound));
-        }
-
-        NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.cancel(notificationId);
-        mNotifyMgr.notify(notificationId, mBuilder.build());
-    }
 
     private NotificationCompat.Builder notificationBuilder(String title, String content, Intent intent) {
-        return new NotificationCompat.Builder(mContext)
+        return new NotificationCompat.Builder(mContext, getApplicationContext().getString(R.string.channel_name))
                 .setSmallIcon(R.drawable.ic_action_communication_invert_colors_on)
                 .setContentTitle(title)
                 .setContentText(content)
+                .setChannelId(NW_CHAN_ID)
                 .setContentIntent(notificationIntent(intent));
     }
 
@@ -422,13 +386,8 @@ public class Notifications extends IntentService {
 
     private void notificationDismiss(int notificationId) {
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        assert mNotifyMgr != null;
         mNotifyMgr.cancel(notificationId);
-    }
-
-    public static void bgUnclearAlert(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        int otherAlertSnooze =  Integer.parseInt(prefs.getString("other_alerts_snooze", "20"));
-        OtherAlert(context, "bg_unclear_readings_alert", "Unclear Sensor Readings", uncleanAlertNotificationId,  otherAlertSnooze);
     }
 
     public static void bgMissedAlert(Context context) {
@@ -450,12 +409,14 @@ public class Notifications extends IntentService {
             OtherAlert(context, type, message, notificatioId, Integer.MAX_VALUE / 100000);
         } else {
             NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            assert mNotifyMgr != null;
             mNotifyMgr.cancel(notificatioId);
             UserNotificationV2.DeleteNotificationByType(type);
         }
     }
 
     private static void OtherAlert(Context context, String type, String message, int notificatioId, int snooze) {
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String otherAlertsSound = prefs.getString("other_alerts_sound", "content://settings/system/notification_sound");
         Boolean otherAlertsOverrideSilent = prefs.getBoolean("other_alerts_override_silent", false);
@@ -469,22 +430,52 @@ public class Notifications extends IntentService {
             UserNotificationV2.create(message, type);
             Intent intent = new Intent(context, Home.class);
             NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(context)
+                    new NotificationCompat.Builder(context, context.getString(R.string.channel_name))
                             .setSmallIcon(R.drawable.ic_action_communication_invert_colors_on)
                             .setContentTitle(message)
                             .setContentText(message)
                             .setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
-            mBuilder.setVibrate(vibratePattern);
-            mBuilder.setLights(0xff00ff00, 300, 1000);
+            //mBuilder.setVibrate(vibratePattern);
+            mBuilder.setLights(Color.RED, 300, 1000);
             if(otherAlertsOverrideSilent) {
-                mBuilder.setSound(Uri.parse(otherAlertsSound), AudioAttributes.USAGE_ALARM);
+                mBuilder.setSound(Uri.parse(otherAlertsSound), AudioManager.STREAM_ALARM);
             } else {
                 mBuilder.setSound(Uri.parse(otherAlertsSound));
             }
             NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            assert mNotifyMgr != null;
             mNotifyMgr.cancel(notificatioId);
             mNotifyMgr.notify(notificatioId, mBuilder.build());
         }
+    }
+    private void soundAlert(String soundUri) {
+        manager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        assert manager != null;
+        int maxVolume = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        currentVolume = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        manager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0);
+        Uri notification = Uri.parse(soundUri);
+        MediaPlayer player = MediaPlayer.create(mContext, notification);
+
+        player.setOnCompletionListener(mp -> manager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0));
+        player.start();
+    }
+    public static void bgUnclearAlert(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        int otherAlertSnooze =  Integer.parseInt(prefs.getString("other_alerts_snooze", "20"));
+        OtherAlert(context, "bg_unclear_readings_alert", "Unclear Sensor Readings", uncleanAlertNotificationId,  otherAlertSnooze);
+    }
+
+    private Notification createExtensionPage(long hours) {
+        return new NotificationCompat.Builder(mContext,NW_CHAN_ID)
+                .extend(new NotificationCompat.WearableExtender()
+                        .setBackground(createWearBitmap(hours))
+                        .setHintShowBackgroundOnly(true)
+                        .setHintAvoidBackgroundClipping(true)
+
+                )
+                .setChannelId("NW_ChannelID")
+                .build();
     }
 
     private void clearCalibrationRequest() {
@@ -510,4 +501,29 @@ public class Notifications extends IntentService {
             notificationDismiss(extraCalibrationNotificationId);
         }
     }
+
+    private void clearAllCalibrationNotifications() {
+        notificationDismiss(calibrationNotificationId);
+        notificationDismiss(extraCalibrationNotificationId);
+        notificationDismiss(doubleCalibrationNotificationId);
+    }
+
+    private void calibrationNotificationCreate(String title, String content, Intent intent, int notificationId) {
+        NotificationCompat.Builder mBuilder = notificationBuilder(title, content, intent);
+        mBuilder.setChannelId(NW_CHAN_ID);
+        //mBuilder.setVibrate(vibratePattern);
+        mBuilder.setColor(Color.RED);
+
+        if(calibration_override_silent) {
+            mBuilder.setSound(Uri.parse(calibration_notification_sound), AudioManager.STREAM_ALARM);
+        } else {
+            mBuilder.setSound(Uri.parse(calibration_notification_sound));
+        }
+
+        NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        assert mNotifyMgr != null;
+        mNotifyMgr.cancel(notificationId);
+        mNotifyMgr.notify(notificationId, mBuilder.build());
+    }
+
 }

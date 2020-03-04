@@ -15,11 +15,11 @@ import com.google.android.gms.wearable.Wearable;
 /**
  * Created by stephenblack on 12/26/14.
  */
-class SendToDataLayerThread extends AsyncTask<DataMap,Void,Void> {
+public class SendToDataLayerThread extends AsyncTask<DataMap,Void,Void> {
     private GoogleApiClient googleApiClient;
     String path;
 
-    SendToDataLayerThread(String path, GoogleApiClient pGoogleApiClient) {
+    public SendToDataLayerThread(String path, GoogleApiClient pGoogleApiClient) {
         this.path = path;
         googleApiClient = pGoogleApiClient;
     }

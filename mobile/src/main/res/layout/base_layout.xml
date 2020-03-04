@@ -1,6 +1,4 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -22,15 +20,8 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <!--YOUR LAYOUT HERE-->
-
-        </LinearLayout>
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/navigation_drawer"
             android:layout_width="240dp"
             android:layout_height="match_parent"

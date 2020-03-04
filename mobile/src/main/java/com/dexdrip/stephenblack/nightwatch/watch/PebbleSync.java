@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch;
+package com.dexdrip.stephenblack.nightwatch.watch;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.dexdrip.stephenblack.nightwatch.BgGraphBuilder;
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
 
@@ -84,14 +85,14 @@ public class PebbleSync extends Service {
         PebbleKit.registerReceivedDataHandler(mContext, new PebbleKit.PebbleDataReceiver(PEBBLEAPP_UUID) {
             @Override
             public void receiveData(final Context context, final int transactionId, final PebbleDictionary data) {
-                Log.d(TAG, "receiveData: transactionId is " + String.valueOf(transactionId));
+                Log.d(TAG, "receiveData: transactionId is " + transactionId);
                 if (lastTransactionId == 0 || transactionId != lastTransactionId) {
                     lastTransactionId = transactionId;
                     Log.d(TAG, "Received Query. data: " + data.size() + ". sending ACK and data");
                     PebbleKit.sendAckToPebble(context, transactionId);
                     sendData();
                 } else {
-                    Log.d(TAG, "receiveData: lastTransactionId is "+ String.valueOf(lastTransactionId)+ ", sending NACK");
+                    Log.d(TAG, "receiveData: lastTransactionId is "+ lastTransactionId + ", sending NACK");
                     PebbleKit.sendNackToPebble(context,transactionId);
                 }
             }

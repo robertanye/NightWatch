@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.TreeSet;
 
 
@@ -41,12 +42,11 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
     public final int BIG_HAND_WIDTH = 16;
     public final int SMALL_HAND_WIDTH = 8;
     public final int NEAR = 2; //how near do the hands have to be to activate overlapping mode
-    public final boolean ALWAYS_HIGHLIGT_SMALL = false;
+    public final boolean ALWAYS_HIGHLIGHT_SMALL = false;
 
     //variables for time
     private float angleBig = 0f;
     private float angleSMALL = 0f;
-    private int hour, minute;
     private int color;
     private Paint circlePaint = new Paint();
     private Paint removePaint = new Paint();
@@ -69,9 +69,8 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
     private double datetime = 0;
     private String direction = "";
     private String delta = "";
-    public TreeSet<BgWatchData> bgDataList = new TreeSet<BgWatchData>();
+    public TreeSet<BgWatchData> bgDataList = new TreeSet<>();
 
-    private View layoutView;
     private int specW;
     private int specH;
     private View myLayout;
@@ -84,10 +83,11 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
         super.onCreate();
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "CreateWakelock");
+        assert powerManager != null;
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NW:CreateWakelock");
         wakeLock.acquire(30000);
 
-        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+        Display display = ((WindowManager) Objects.requireNonNull(getSystemService(Context.WINDOW_SERVICE)))
                 .getDefaultDisplay();
         display.getSize(displaySize);
 
@@ -104,6 +104,7 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter(Intent.ACTION_SEND));
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        assert inflater != null;
         myLayout = inflater.inflate(R.layout.modern_layout, null);
         prepareLayout();
         prepareDrawTime();
@@ -141,9 +142,9 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
 
         // prepare fields
 
-        TextView textView = null;
+        TextView textView;
 
-        textView = (TextView) myLayout.findViewById(R.id.sgvString);
+        textView = myLayout.findViewById(R.id.sgvString);
         if (sharedPrefs.getBoolean("showBG", true)) {
             textView.setVisibility(View.VISIBLE);
             textView.setText(getSgvString());
@@ -154,7 +155,7 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
             textView.setVisibility(View.INVISIBLE);
         }
 
-        textView = (TextView) myLayout.findViewById(R.id.rawString);
+        textView = myLayout.findViewById(R.id.rawString);
         if (sharedPrefs.getBoolean("showRaw", false)||
                 (sharedPrefs.getBoolean("showRawNoise", true) && getSgvString().equals("???"))
                 ) {
@@ -167,7 +168,7 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
             textView.setVisibility(View.GONE);
         }
 
-        textView = (TextView) myLayout.findViewById(R.id.agoString);
+        textView = myLayout.findViewById(R.id.agoString);
         if (sharedPrefs.getBoolean("showAgo", true)) {
             textView.setVisibility(View.VISIBLE);
 
@@ -183,7 +184,7 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
             textView.setVisibility(View.INVISIBLE);
         }
 
-        textView = (TextView) myLayout.findViewById(R.id.deltaString);
+        textView = myLayout.findViewById(R.id.deltaString);
         if (sharedPrefs.getBoolean("showDelta", true)) {
             textView.setVisibility(View.VISIBLE);
             textView.setText(getDelta());
@@ -248,8 +249,8 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
     private synchronized void prepareDrawTime() {
         Log.d("CircleWatchface", "start prepareDrawTime");
 
-        hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) % 12;
-        minute = Calendar.getInstance().get(Calendar.MINUTE);
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) % 12;
+        int minute = Calendar.getInstance().get(Calendar.MINUTE);
         angleBig = (((hour + minute / 60f) / 12f * 360) - 90 - BIG_HAND_WIDTH / 2f + 360) % 360;
         angleSMALL = ((minute / 60f * 360) - 90 - SMALL_HAND_WIDTH / 2f + 360) % 360;
 
@@ -292,12 +293,9 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
         removePaint.setStrokeWidth(CIRCLE_WIDTH);
         removePaint.setAntiAlias(true);
         removePaint.setColor(getBackgroundColor());
-
-        ;
-
-        rect = new RectF(PADDING, PADDING, (float) (displaySize.x - PADDING), (float) (displaySize.y - PADDING));
-        rectDelete = new RectF(PADDING - CIRCLE_WIDTH / 2, PADDING - CIRCLE_WIDTH / 2, (float) (displaySize.x - PADDING + CIRCLE_WIDTH / 2), (float) (displaySize.y - PADDING + CIRCLE_WIDTH / 2));
-        overlapping = ALWAYS_HIGHLIGT_SMALL || areOverlapping(angleSMALL, angleSMALL + SMALL_HAND_WIDTH + NEAR, angleBig, angleBig + BIG_HAND_WIDTH + NEAR);
+        rect = new RectF(PADDING, PADDING, displaySize.x - PADDING, displaySize.y - PADDING);
+        rectDelete = new RectF(PADDING - CIRCLE_WIDTH / 2, PADDING - CIRCLE_WIDTH / 2, displaySize.x - PADDING + CIRCLE_WIDTH / 2, displaySize.y - PADDING + CIRCLE_WIDTH / 2);
+        overlapping = ALWAYS_HIGHLIGHT_SMALL || areOverlapping(angleSMALL, angleSMALL + SMALL_HAND_WIDTH + NEAR, angleBig, angleBig + BIG_HAND_WIDTH + NEAR);
         Log.d("CircleWatchface", "end prepareDrawTime");
 
     }
@@ -321,7 +319,8 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
     protected void onTimeChanged(WatchFaceTime oldTime, WatchFaceTime newTime) {
         if (oldTime.hasMinuteChanged(newTime)) {
             PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "TimeChangedWakelock");
+            assert powerManager != null;
+            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NW:TimeChangedWakelock");
             wakeLock.acquire(30000);
             /*Preparing the layout just on every minute tick:
             *  - hopefully better battery life
@@ -516,11 +515,12 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
         @Override
         public void onReceive(Context context, Intent intent) {
             PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+            assert powerManager != null;
             PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                    "MyWakelockTag");
+                    "NW:MyWakelockTag");
             wakeLock.acquire(30000);
 
-            DataMap dataMap = DataMap.fromBundle(intent.getBundleExtra("data"));
+            DataMap dataMap = DataMap.fromBundle(Objects.requireNonNull(intent.getBundleExtra("data")));
             setSgvLevel((int) dataMap.getLong("sgvLevel"));
             Log.d("CircleWatchface", "sgv level : " + getSgvLevel());
             setSgvString(dataMap.getString("sgvString"));
@@ -583,7 +583,6 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
         }
         bgDataList.removeAll(removeSet);
         Log.d("addToWatchSet", "after bgDataList.size(): " + bgDataList.size());
-        removeSet = null;
         System.gc();
     }
 

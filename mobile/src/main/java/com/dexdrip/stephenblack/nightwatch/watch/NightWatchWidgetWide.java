@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch;
+package com.dexdrip.stephenblack.nightwatch.watch;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -13,8 +13,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.dexdrip.stephenblack.nightwatch.BgGraphBuilder;
+import com.dexdrip.stephenblack.nightwatch.BgSparklineBuilder;
+import com.dexdrip.stephenblack.nightwatch.R;
 import com.dexdrip.stephenblack.nightwatch.activities.Home;
 import com.dexdrip.stephenblack.nightwatch.model.Bg;
+import com.dexdrip.stephenblack.nightwatch.services.WidgetUpdateService;
 
 import java.util.Date;
 
@@ -54,7 +58,7 @@ public class NightWatchWidgetWide extends AppWidgetProvider {
         Intent intent = new Intent(context, Home.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views = new RemoteViews(context.getPackageName(), R.layout.nightwatch_widget_wide);
-        views.setOnClickPendingIntent(R.id.widget_wide, pendingIntent);;
+        views.setOnClickPendingIntent(R.id.widget_wide, pendingIntent);
         Log.d(TAG, "Update widget signal received");
         Log.d(TAG, "Update widget signal received");
         displayCurrentInfo(appWidgetManager, appWidgetId);

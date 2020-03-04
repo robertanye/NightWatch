@@ -4,7 +4,7 @@ import android.content.Intent;
 import androidx.legacy.content.WakefulBroadcastReceiver;
 
 import com.dexdrip.stephenblack.nightwatch.model.Bg;
-import com.dexdrip.stephenblack.nightwatch.DataCollectionService;
+import com.dexdrip.stephenblack.nightwatch.services.DataCollectionService;
 
 import java.util.Date;
 

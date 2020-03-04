@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch;
+package com.dexdrip.stephenblack.nightwatch.watch;
 
 
 import android.app.PendingIntent;
@@ -16,8 +16,12 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import com.dexdrip.stephenblack.nightwatch.BgGraphBuilder;
+import com.dexdrip.stephenblack.nightwatch.BgSparklineBuilder;
+import com.dexdrip.stephenblack.nightwatch.R;
 import com.dexdrip.stephenblack.nightwatch.activities.Home;
 import com.dexdrip.stephenblack.nightwatch.model.Bg;
+import com.dexdrip.stephenblack.nightwatch.services.WidgetUpdateService;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -56,7 +60,7 @@ public class NightWatchWidget extends AppWidgetProvider {
         Intent intent = new Intent(context, Home.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views = new RemoteViews(context.getPackageName(), R.layout.nightwatch_widget_small);
-        views.setOnClickPendingIntent(R.id.widget_small, pendingIntent);;
+        views.setOnClickPendingIntent(R.id.widget_small, pendingIntent);
         Log.d(TAG, "Update widget signal received");
         displayCurrentInfo(appWidgetManager, appWidgetId);
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -67,13 +71,11 @@ public class NightWatchWidget extends AppWidgetProvider {
         BgGraphBuilder bgGraphBuilder = new BgGraphBuilder(mContext);
         Bg lastBgreading = Bg.last();
         if (lastBgreading != null) {
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                int height = appWidgetManager.getAppWidgetOptions(appWidgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
-                int width = appWidgetManager.getAppWidgetOptions(appWidgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
-                views.setImageViewBitmap(R.id.widgetGraph, new BgSparklineBuilder(mContext)
-                        .setBgGraphBuilder(bgGraphBuilder)
-                        .setHeight(height).setWidth(width).build());
-            }
+            int height = appWidgetManager.getAppWidgetOptions(appWidgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
+            int width = appWidgetManager.getAppWidgetOptions(appWidgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
+            views.setImageViewBitmap(R.id.widgetGraph, new BgSparklineBuilder(mContext)
+                    .setBgGraphBuilder(bgGraphBuilder)
+                    .setHeight(height).setWidth(width).build());
             double estimate = 0;
             if ((new Date().getTime()) - (60000 * 11) - lastBgreading.datetime > 0) {
                 estimate = lastBgreading.sgv_double();

@@ -29,7 +29,7 @@ public class Egv {
 
     private String toDateString(double timestamp) {
         long shortened = (long) Math.floor((timestamp/1000));
-        return "/Date(" + Long.toString(shortened*1000) + ")/";
+        return "/Date(" + shortened * 1000 + ")/";
     }
 
 //    {

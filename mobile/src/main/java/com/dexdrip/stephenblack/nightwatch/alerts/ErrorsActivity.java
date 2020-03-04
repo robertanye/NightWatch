@@ -39,16 +39,16 @@ public class ErrorsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        highCheckboxView = (CheckBox) findViewById(R.id.highSeverityCheckbox);
-        mediumCheckboxView = (CheckBox) findViewById(R.id.midSeverityCheckbox);
-        lowCheckboxView = (CheckBox) findViewById(R.id.lowSeverityCheckBox);
+        highCheckboxView = findViewById(R.id.highSeverityCheckbox);
+        mediumCheckboxView = findViewById(R.id.midSeverityCheckbox);
+        lowCheckboxView = findViewById(R.id.lowSeverityCheckBox);
 
         highCheckboxView.setOnClickListener(checkboxListener);
         mediumCheckboxView.setOnClickListener(checkboxListener);
         lowCheckboxView.setOnClickListener(checkboxListener);
 
         updateErrors();
-        errorList = (ListView) findViewById(R.id.errorList);
+        errorList = findViewById(R.id.errorList);
         adapter = new ErrorListAdapter(getApplicationContext(), errors);
         errorList.setAdapter(adapter);
     }

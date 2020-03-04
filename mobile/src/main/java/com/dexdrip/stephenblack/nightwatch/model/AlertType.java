@@ -58,7 +58,7 @@ public class AlertType extends Model {
     @Column(name = "type" )
     public alertType type;
 
-    public enum alertType{high,low,missed};
+    public enum alertType{high,low,missed}
 
     @Column(name = "threshold")
     public double threshold;
@@ -195,11 +195,8 @@ public class AlertType extends Model {
 
     // returns true, if one alert is up and the second is down
     public static boolean OpositeDirection(AlertType a1, AlertType a2) {
-        if ( a1.type == AlertType.alertType.high &&
-                a2.type == AlertType.alertType.low ) {
-            return true;
-        }
-        return false;
+        return a1.type == alertType.high &&
+                a2.type == alertType.low;
     }
 
     // Checks if a1 is more important than a2. returns the higher one
@@ -453,35 +450,24 @@ public class AlertType extends Model {
         int time_now = toTime(rightNow.get(Calendar.HOUR_OF_DAY), rightNow.get(Calendar.MINUTE));
         Log.d(TAG, "time_now is " + time_now + " minutes" + " start_time " + start_time_minutes + " end_time " + end_time_minutes);
         if(start_time_minutes < end_time_minutes) {
-            if (time_now >= start_time_minutes && time_now <= end_time_minutes) {
-                return true;
-            }
+            return time_now >= start_time_minutes && time_now <= end_time_minutes;
         } else {
-            if (time_now >= start_time_minutes || time_now <= end_time_minutes) {
-                return true;
-            }
+            return time_now >= start_time_minutes || time_now <= end_time_minutes;
         }
-        return false;
     }
 
     private boolean beyond_threshold(double bg) {
         if (type == alertType.high && bg >= threshold) {
 //            Log.e(TAG, "beyond_threshold returning true " );
             return true;
-        } else if (type == alertType.low && bg <= threshold) {
-            return true;
-        }
-        return false;
+        } else return type == alertType.low && bg <= threshold;
     }
 
     private boolean trending_to_threshold(double bg) {
         if (!predictive) { return false; }
         if (type == alertType.high && bg >= threshold) {
             return true;
-        } else if (type == alertType.low && bg <= threshold) {
-            return true;
-        }
-        return false;
+        } else return type == alertType.low && bg <= threshold;
     }
     /**
      * Gets the state of Airplane Mode.
@@ -508,23 +494,15 @@ public class AlertType extends Model {
     // check to see if we should alarm on a missed data alert
     private boolean should_alarm_missed_data( Context context ) {
         boolean ret;
-        if ( !isAirplaneModeOn(context)
-                && ( Bg.readingAgeInMins() > (missed_minutes_threshold ) )
-                && (in_time_frame() && active) ) {
-            ret = true;
-        } else {
-            ret = false;
-        }
+        ret = !isAirplaneModeOn(context)
+                && (Bg.readingAgeInMins() > (missed_minutes_threshold))
+                && (in_time_frame() && active);
         return ret;
 
     }
     private boolean should_alarm(double bg) {
 //        Log.e(TAG, "should_alarm called active =  " + active );
-        if(in_time_frame() && active && (beyond_threshold(bg) || trending_to_threshold(bg))) {
-            return true;
-        } else {
-            return false;
-        }
+        return in_time_frame() && active && (beyond_threshold(bg) || trending_to_threshold(bg));
     }
 
     public static void testAlert(

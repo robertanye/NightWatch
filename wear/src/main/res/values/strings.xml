@@ -18,5 +18,8 @@
         <item>4</item>
         <item>5</item>
     </string-array>
+    <string name="raw_reading">"R: %s"</string>
+    <string name="uploader_battery">"U: %s %%"</string>
+    <string name="uploader">"Uploader : %s %%"</string>
 
 </resources>

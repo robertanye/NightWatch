@@ -89,6 +89,7 @@ public class ListenerService extends WearableListenerService implements GoogleAp
 
 
                 String path = event.getDataItem().getUri().getPath();
+                assert path != null;
                 if (path.equals(OPEN_SETTINGS)) {
                     //TODO: OpenSettings
                     Intent intent = new Intent(this, NWPreferences.class);

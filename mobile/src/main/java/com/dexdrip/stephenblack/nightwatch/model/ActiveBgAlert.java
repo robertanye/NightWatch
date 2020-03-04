@@ -43,10 +43,7 @@ public class ActiveBgAlert extends Model {
 
 
     public boolean ready_to_alarm() {
-        if(new Date().getTime() > next_alert_at) {
-            return true;
-        }
-        return false;
+        return new Date().getTime() > next_alert_at;
     }
 
     public static boolean alertSnoozeOver() {

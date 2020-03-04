@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch;
+package com.dexdrip.stephenblack.nightwatch.watch;
 
 import retrofit2.http.GET;
 import retrofit2.http.Query;

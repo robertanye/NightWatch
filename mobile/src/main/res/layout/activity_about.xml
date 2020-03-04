@@ -11,7 +11,7 @@
     tools:context="com.dexdrip.stephenblack.nightwatch.activities.About">
 
     <TextView
-        android:text="Version Number"
+        android:text="@string/version_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/versionNumber"
@@ -20,7 +20,7 @@
         android:layout_alignStart="@+id/versionName" />
 
     <TextView
-        android:text="Version Name"
+        android:text="@string/version_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="61dp"
@@ -30,7 +30,7 @@
         android:layout_alignParentStart="true" />
 
     <TextView
-        android:text="About"
+        android:text="@string/about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/About"
