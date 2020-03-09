@@ -4,7 +4,7 @@ import android.content.Intent;
 import androidx.legacy.content.WakefulBroadcastReceiver;
 
 import com.dexdrip.stephenblack.nightwatch.model.Bg;
-import com.dexdrip.stephenblack.nightwatch.services.DataCollectionService;
+import com.dexdrip.stephenblack.nightwatch.services.ShareDataCollectionService;
 
 import java.util.Date;
 
@@ -46,7 +46,7 @@ public class IntentService extends android.app.IntentService {
                 bg.raw = intent.getDoubleExtra(Intents.EXTRA_RAW, 0);
                 bg.save();
 
-                DataCollectionService.newDataArrived(this, true, bg);
+                ShareDataCollectionService.newDataArrived(this, true, bg);
             }
         } finally {
             WakefulBroadcastReceiver.completeWakefulIntent(intent);

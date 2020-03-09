@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch.alerts;
+package com.dexdrip.stephenblack.nightwatch.activities;
 
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +7,7 @@ import android.widget.ListView;
 
 import com.dexdrip.stephenblack.nightwatch.activities.BaseActivity;
 import com.dexdrip.stephenblack.nightwatch.R;
+import com.dexdrip.stephenblack.nightwatch.alerts.ErrorListAdapter;
 import com.dexdrip.stephenblack.nightwatch.model.UserError;
 
 import java.util.ArrayList;

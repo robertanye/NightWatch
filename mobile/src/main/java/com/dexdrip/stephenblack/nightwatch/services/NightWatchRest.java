@@ -23,7 +23,7 @@ import retrofit2.Retrofit;
 /**
  * Created by stephenblack on 12/26/14.
  */
-public class Rest {
+public class NightWatchRest {
     private Context mContext;
     private String mUrl;
     private static final String UNITS = "mgdl";
@@ -31,7 +31,7 @@ public class Rest {
     private PowerManager.WakeLock wakeLock;
 
 
-    Rest(Context context) {
+    NightWatchRest(Context context) {
         mContext = context;
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         mUrl = prefs.getString("dex_collection_method", "https://{yoursite}.herokuapp.com");
@@ -80,7 +80,7 @@ public class Rest {
                         }
                     }
                     returnedBg.save();
-                    DataCollectionService.newDataArrived(mContext, true, returnedBg);
+                    ShareDataCollectionService.newDataArrived(mContext, true, returnedBg);
                     newData = true;
                 }
             }

@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 
-import com.dexdrip.stephenblack.nightwatch.services.DataCollectionService;
+import com.dexdrip.stephenblack.nightwatch.services.ShareDataCollectionService;
 import com.dexdrip.stephenblack.nightwatch.watch.PebbleSync;
 import com.dexdrip.stephenblack.nightwatch.R;
 
@@ -27,28 +27,23 @@ import com.dexdrip.stephenblack.nightwatch.R;
 public class SettingsActivity extends AppCompatActivity  {
     public static final String MENU_NAME = "Settings";
     public static SharedPreferences prefs;
-    private static AllPrefsFragment prefsFragment;
 
     @Override
     protected void onResume(){
         super.onResume();
-
     }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.navDrawer);
-        prefsFragment = new AllPrefsFragment();
+        AllPrefsFragment prefsFragment = new AllPrefsFragment();
         getFragmentManager().beginTransaction().replace(android.R.id.content,
                 prefsFragment).commit();
     }
 
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
     }
 
     @Override
@@ -59,8 +54,6 @@ public class SettingsActivity extends AppCompatActivity  {
     public static class AllPrefsFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
-
-            //super.onCreate(savedInstanceState);
 
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_license);
@@ -108,7 +101,7 @@ public class SettingsActivity extends AppCompatActivity  {
 
             Preference.OnPreferenceChangeListener collectionPrefValueListener = (preference, value) -> {
                 Context context = preference.getContext();
-                context.startService(new Intent(context, DataCollectionService.class));
+                context.startService(new Intent(context, ShareDataCollectionService.class));
                 return true;
             };
 
@@ -121,7 +114,7 @@ public class SettingsActivity extends AppCompatActivity  {
                     dataSource.removePreference(dexcom_account_password);
                 }
                 Context context = preference.getContext();
-                context.startService(new Intent(context, DataCollectionService.class));
+                context.startService(new Intent(context, ShareDataCollectionService.class));
                 return true;
             });
 
@@ -132,7 +125,7 @@ public class SettingsActivity extends AppCompatActivity  {
                     dataSource.removePreference(dex_collection_method);
                 }
                 Context context = preference.getContext();
-                context.startService(new Intent(context, DataCollectionService.class));
+                context.startService(new Intent(context, ShareDataCollectionService.class));
                 return true;
             });
 

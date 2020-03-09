@@ -5,17 +5,17 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.dexdrip.stephenblack.nightwatch.model.AlertType;
-import com.dexdrip.stephenblack.nightwatch.alerts.SnoozeActivity;
+import com.dexdrip.stephenblack.nightwatch.activities.SnoozeActivity;
 import com.dexdrip.stephenblack.nightwatch.Constants;
 
 /**
  * Created by stephenblack on 9/4/15.
  */
-public class IdempotentMigrations {
+public class dbModelMigrations {
     private Context mContext;
     private SharedPreferences prefs;
 
-    public IdempotentMigrations(Context context) {
+    public dbModelMigrations(Context context) {
         this.mContext = context;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
     }

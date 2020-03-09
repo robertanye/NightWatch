@@ -106,7 +106,7 @@
 
     </LinearLayout>
         </LinearLayout>
-        <androidx.fragment.app.FragmentContainerView
+        <fragment
             android:id="@+id/navigation_drawer"
             android:layout_width="240dp"
             android:layout_height="match_parent"

@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import androidx.core.app.NotificationCompat;
 
+import com.dexdrip.stephenblack.nightwatch.activities.EditAlertActivity;
+import com.dexdrip.stephenblack.nightwatch.activities.SnoozeActivity;
 import com.dexdrip.stephenblack.nightwatch.model.ActiveBgAlert;
 import com.dexdrip.stephenblack.nightwatch.model.AlertType;
 import com.dexdrip.stephenblack.nightwatch.model.Bg;
@@ -109,7 +111,7 @@ public class AlertPlayer {
         }
     }
 
-    synchronized  void Snooze(Context ctx, int repeatTime) {
+    public synchronized  void Snooze(Context ctx, int repeatTime) {
         checkForValidChannel(ctx);
         Log.i(TAG, "Snooze called repeatTime = " + repeatTime);
         stopAlert(ctx, false, false);
@@ -121,7 +123,7 @@ public class AlertPlayer {
         activeBgAlert.snooze(repeatTime);
     }
 
-    synchronized  void PreSnooze(Context ctx, String uuid, int repeatTime) {
+    public synchronized  void PreSnooze(Context ctx, String uuid, int repeatTime) {
         checkForValidChannel(ctx);
         Log.i(TAG, "PreSnooze called repeatTime = "+ repeatTime);
         stopAlert(ctx, true, false);

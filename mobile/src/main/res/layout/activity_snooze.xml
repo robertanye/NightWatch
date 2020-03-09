@@ -22,118 +22,135 @@
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent" >
 
             <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:showDividers="middle">
 
-                <ScrollView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:id="@+id/scrollView4" >
-                    <LinearLayout
-                        android:layout_width="fill_parent"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="112dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    tools:visibility="visible">
+
+                    <Button
+                        android:id="@+id/button_snooze"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:layout_weight="1"
+                        android:text="@string/snooze"
+                        android:textSize="30sp"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="109dp"
+                    android:layout_weight=".25"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <NumberPicker
+                        android:id="@+id/snooze"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center_horizontal"
-                        android:showDividers="middle">
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight=".2"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal">
-                            <Button
-                                android:id="@+id/button_snooze"
-                                android:layout_width="fill_parent"
-                                android:layout_height="fill_parent"
-                                android:text="@string/snooze"
-                                android:layout_margin="20dp"
-                                android:textSize="30sp" />
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight=".25"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal">
+                        android:layout_gravity="center_horizontal"
+                        android:descendantFocusability="blocksDescendants"
+                        tools:visibility="visible" />
 
-                            <NumberPicker
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/snooze"
-                                android:layout_gravity="center_horizontal"
-                                android:descendantFocusability="blocksDescendants"/>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight=".25"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal"
-                            android:paddingTop="10dp">
+                </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/alert_status"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_horizontal"
-                                android:text="@string/replace_dynamically_alert_status"
-                                android:textSize="20sp"/>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight=".3"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal">
-                            <Button
-                                android:id="@+id/button_disable_low_alerts"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/disable_low_alerts"/>
-                            <Button
-                                android:id="@+id/enable_low_alerts"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/re_enable_low_alerts"/>
-                            <Button
-                                android:id="@+id/button_disable_high_alerts"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/disable_high_alerts"/>
-                            <Button
-                                android:id="@+id/enable_high_alerts"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/re_enable_high_alerts"/>
-                            <Button
-                                android:id="@+id/button_disable_alerts"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/disable_all_alerts"/>
-                            <Button
-                                android:id="@+id/enable_alerts"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/re_enable_all_alerts"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                </ScrollView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".25"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/alert_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:gravity="center|center_horizontal|center_vertical"
+                        android:text="@string/replace_dynamically_alert_status"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="255dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/button_disable_low_alerts"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_weight="1"
+                        android:text="@string/disable_low_alerts"
+                        android:textSize="15sp" />
+
+                    <Button
+                        android:id="@+id/enable_low_alerts"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_weight="1"
+                        android:text="@string/re_enable_low_alerts"
+                        android:textSize="15sp" />
+
+                    <Button
+                        android:id="@+id/button_disable_high_alerts"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_weight="1"
+                        android:text="@string/disable_high_alerts"
+                        android:textSize="15sp" />
+
+                    <Button
+                        android:id="@+id/enable_high_alerts"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_weight="1"
+                        android:text="@string/re_enable_high_alerts"
+                        android:textSize="15sp" />
+
+                    <Button
+                        android:id="@+id/button_disable_alerts"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_weight="1"
+                        android:text="@string/disable_all_alerts"
+                        android:textSize="15sp" />
+
+                    <Button
+                        android:id="@+id/enable_alerts"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_weight="1"
+                        android:text="@string/re_enable_all_alerts"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
 
             </LinearLayout>
-        </LinearLayout>
 
-        <androidx.fragment.app.FragmentContainerView
+        </FrameLayout>
+
+        <fragment
             android:id="@+id/navigation_drawer"
             android:name="com.dexdrip.stephenblack.nightwatch.NavigationDrawerFragment"
             android:layout_width="240dp"

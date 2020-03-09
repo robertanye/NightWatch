@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch.alerts;
+package com.dexdrip.stephenblack.nightwatch.activities;
 
 import androidx.appcompat.app.AlertDialog;
 import android.app.Dialog;
@@ -31,7 +31,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.dexdrip.stephenblack.nightwatch.activities.BaseActivity;
+import com.dexdrip.stephenblack.nightwatch.alerts.AlertPlayer;
 import com.dexdrip.stephenblack.nightwatch.model.AlertType;
 import com.dexdrip.stephenblack.nightwatch.model.UserError.Log;
 import com.dexdrip.stephenblack.nightwatch.BgGraphBuilder;

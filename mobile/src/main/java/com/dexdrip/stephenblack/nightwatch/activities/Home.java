@@ -9,7 +9,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
@@ -20,12 +19,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.dexdrip.stephenblack.nightwatch.BgGraphBuilder;
-import com.dexdrip.stephenblack.nightwatch.services.DataCollectionService;
+import com.dexdrip.stephenblack.nightwatch.services.ShareDataCollectionService;
 import com.dexdrip.stephenblack.nightwatch.R;
 import com.dexdrip.stephenblack.nightwatch.services.WatchUpdaterService;
 import com.dexdrip.stephenblack.nightwatch.integration.dexdrip.Intents;
 import com.dexdrip.stephenblack.nightwatch.model.Bg;
-import com.dexdrip.stephenblack.nightwatch.utils.IdempotentMigrations;
+import com.dexdrip.stephenblack.nightwatch.utils.dbModelMigrations;
 
 import java.util.Date;
 
@@ -75,16 +74,13 @@ public class Home extends BaseActivity {
         setDefaultValues(this, R.xml.pref_bg_notification, false);
         setDefaultValues(this, R.xml.pref_watch_integration, false);
 
-
-
         prefs = getDefaultSharedPreferences(this);
 
         checkEula();
 
-        new IdempotentMigrations(getApplicationContext()).performAll();
+        new dbModelMigrations(getApplicationContext()).performAll();
 
-        startService(new Intent(getApplicationContext(), DataCollectionService.class));
-
+        startService(new Intent(getApplicationContext(), ShareDataCollectionService.class));
 
         preferenceChangeListener = (sharedPreferences, key) -> invalidateOptionsMenu();
 

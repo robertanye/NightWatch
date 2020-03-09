@@ -1,21 +1,15 @@
 package com.dexdrip.stephenblack.nightwatch.stats;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.activeandroid.Cache;
-import com.activeandroid.query.Select;
-import com.dexdrip.stephenblack.nightwatch.model.Bg;
-import com.dexdrip.stephenblack.nightwatch.Constants;
+import com.dexdrip.stephenblack.nightwatch.activities.StatsActivity;
 
 
+import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Vector;
@@ -61,7 +55,7 @@ public class DBSearchUtil {
             do {
                 reading = new BgReadingStats();
                 if ( cur.isFirst() ) {
-                    String date = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(reading.timestamp));
+                    DateFormat date = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
                     Log.d("getReadings", "First timestamp: " + date);
                 }
                 reading.timestamp = (long)cur.getDouble(0);
@@ -72,7 +66,7 @@ public class DBSearchUtil {
                     recordCount = recordCount + 1;
                 }
             } while (cur.moveToNext());
-            String date = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (reading.timestamp));
+            DateFormat date = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
             Log.d("getReadings", "Last timestamp: " + date );
             Log.d("getReadings", "Number of readings " + recordCount);
         } else {

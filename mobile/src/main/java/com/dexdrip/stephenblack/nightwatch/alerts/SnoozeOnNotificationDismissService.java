@@ -3,6 +3,7 @@ package com.dexdrip.stephenblack.nightwatch.alerts;
 import android.app.IntentService;
 import android.content.Intent;
 
+import com.dexdrip.stephenblack.nightwatch.activities.SnoozeActivity;
 import com.dexdrip.stephenblack.nightwatch.model.ActiveBgAlert;
 import com.dexdrip.stephenblack.nightwatch.model.AlertType;
 

@@ -10,7 +10,7 @@ import android.util.Log;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
-import com.dexdrip.stephenblack.nightwatch.services.DataCollectionService;
+import com.dexdrip.stephenblack.nightwatch.services.ShareDataCollectionService;
 import com.google.gson.annotations.Expose;
 
 /**
@@ -56,7 +56,7 @@ public class ShareGlucose extends Model {
             bg.datetime = timestamp;
             bg.sgv = Integer.toString((int) Value);
             bg.save();
-            DataCollectionService.newDataArrived(mContext, true, bg);
+            ShareDataCollectionService.newDataArrived(mContext, true, bg);
             Log.d("SHARE", "Share Data Processed Successfully!");
         } else {
             Log.d("SHARE", "A Bg Value similar to this timestamp already exists.");

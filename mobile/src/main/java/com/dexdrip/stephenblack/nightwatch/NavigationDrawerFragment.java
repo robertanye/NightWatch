@@ -5,18 +5,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.preference.PreferenceManager;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.util.Log;
@@ -24,6 +24,7 @@ import android.util.Log;
 import com.dexdrip.stephenblack.nightwatch.utils.NavDrawerBuilder;
 
 import java.util.List;
+import java.util.Objects;
 
 public class NavigationDrawerFragment extends Fragment {
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
@@ -36,8 +37,7 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     public NavDrawerBuilder navDrawerBuilder;
     private View mFragmentContainerView;
-    private int menu_position;
-    private List<String> menu_option_list;
+    int menu_position;
     private List<Intent> intent_list;
 
     public NavigationDrawerFragment() { }
@@ -54,34 +54,19 @@ public class NavigationDrawerFragment extends Fragment {
             mFromSavedInstanceState = true;
         }
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
-            }
-        });
+        mDrawerListView.setOnItemClickListener((parent, view, position, id) -> selectItem(position));
         navDrawerBuilder = new NavDrawerBuilder(getActivity());
-        List<String> menu_option_list = navDrawerBuilder.nav_drawer_options;
         intent_list = navDrawerBuilder.nav_drawer_intents;
-
-
         return mDrawerListView;
     }
-
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
     }
-    
-
-
     public void setUp(int fragmentId, DrawerLayout drawerLayout, String current_activity, Context context) {
         mDrawerLayout = drawerLayout;
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -92,7 +77,7 @@ public class NavigationDrawerFragment extends Fragment {
         String[] menu_options = menu_option_list.toArray(new String[menu_option_list.size()]);
         intent_list = navDrawerBuilder.nav_drawer_intents;
 
-        mFragmentContainerView = getActivity().findViewById(fragmentId);
+        mFragmentContainerView = Objects.requireNonNull(getActivity()).findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
         mCurrentSelectedPosition = menu_position;
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
@@ -103,14 +88,11 @@ public class NavigationDrawerFragment extends Fragment {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
         } else {
-            try {
-            } catch (Exception e) {
-                Log.d("NavigationDrawerFrag", "Exception with getActionBar: " + e.toString());
-            }
-        } 
+            Log.e("NavigationDrawerFrag", "Exception with getActionBar: ");
+        }
 
         try {
-            mDrawerListView.setAdapter(new ArrayAdapter<String>(
+            mDrawerListView.setAdapter(new ArrayAdapter<>(
                     actionBar.getThemedContext(),
                     android.R.layout.simple_list_item_activated_1,
                     android.R.id.text1,
@@ -119,7 +101,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         } catch (NullPointerException e) {
             try {
-                mDrawerListView.setAdapter(new ArrayAdapter<String>(
+                mDrawerListView.setAdapter(new ArrayAdapter<>(
                         getActivity().getActionBar().getThemedContext(),
                         android.R.layout.simple_list_item_activated_1,
                         android.R.id.text1,
@@ -129,7 +111,6 @@ public class NavigationDrawerFragment extends Fragment {
                 Log.d("NavigationDrawerFrag", "Got second null pointer: " + ex.toString());
             }
         }
-
         mDrawerToggle = new ActionBarDrawerToggle(
                 getActivity(),
                 mDrawerLayout,
@@ -142,7 +123,6 @@ public class NavigationDrawerFragment extends Fragment {
                 if (!isAdded()) { return; }
                 getActivity().invalidateOptionsMenu();
             }
-
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -154,8 +134,6 @@ public class NavigationDrawerFragment extends Fragment {
                             .getDefaultSharedPreferences(getActivity());
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
-
-
                 getActivity().invalidateOptionsMenu();
             }
         };

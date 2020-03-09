@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -12,6 +16,7 @@ import com.dexdrip.stephenblack.nightwatch.NavigationDrawerFragment;
 import com.dexdrip.stephenblack.nightwatch.R;
 import com.dexdrip.stephenblack.nightwatch.utils.NavDrawerBuilder;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -24,6 +29,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     @Override
     public void setSupportActionBar(@Nullable Toolbar toolbar) {
         super.setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(null);
     }
 
     @Override
@@ -36,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     @Override
     protected void onResume(){
         super.onResume();
-        mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, findViewById(R.id.drawer_layout), menu_name, this);
 
     }
@@ -76,5 +82,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             }
         }
     }
+
 
 }

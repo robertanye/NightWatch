@@ -8,10 +8,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-
-    <!-- To receive data from xdrip. -->
+    <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" /> <!-- To receive data from xdrip. -->
     <uses-permission android:name="com.eveningoutpost.dexdrip.permissions.RECEIVE_BG_ESTIMATE" />
 
     <application
@@ -20,6 +17,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/NightWatch">
+
         <meta-data
             android:name="AA_DB_NAME"
             android:value="NightWatch.db" />
@@ -28,13 +26,7 @@
             android:value="7" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="com.dexcom.stephenblack.nightwatch.model.ActiveBgAlert,
-                com.dexcom.stephenblack.nightwatch.model.AlertType,
-                com.dexcom.stephenblack.nightwatch.model.Bg,
-                com.dexcom.stephenblack.nightwatch.model.ShareGlucose,
-                com.dexcom.stephenblack.nightwatch.model.UserError,
-                com.dexcom.stephenblack.nightwatch.model.UserNotificationV2"
-        />
+            android:value="com.dexcom.stephenblack.nightwatch.model.ActiveBgAlert,                 com.dexcom.stephenblack.nightwatch.model.AlertType,                 com.dexcom.stephenblack.nightwatch.model.Bg,                 com.dexcom.stephenblack.nightwatch.model.ShareGlucose,                 com.dexcom.stephenblack.nightwatch.model.UserError,                 com.dexcom.stephenblack.nightwatch.model.UserNotificationV2" />
 
         <provider
             android:name="com.activeandroid.content.ContentProvider"
@@ -52,7 +44,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".stats.StatsActivity"
+            android:name=".activities.StatsActivity"
             android:label="Statistics" />
         <activity
             android:name=".activities.SettingsActivity"
@@ -61,20 +53,20 @@
             android:name=".activities.LicenseAgreementActivity"
             android:label="End User License Agreement" />
         <activity
-            android:name=".alerts.EditAlertActivity"
+            android:name=".activities.EditAlertActivity"
             android:label="Edit Alert" />
         <activity
             android:name=".alerts.AlertList"
             android:label="Alert List" />
         <activity
-            android:name=".alerts.SnoozeActivity"
+            android:name=".activities.SnoozeActivity"
             android:label="Snooze" />
         <activity
-            android:name=".alerts.ErrorsActivity"
+            android:name=".activities.ErrorsActivity"
             android:label="Errors" />
 
         <service
-            android:name=".services.DataCollectionService"
+            android:name=".services.ShareDataCollectionService"
             android:exported="true" />
         <service
             android:name=".alerts.Notifications"
@@ -115,8 +107,7 @@
         </receiver>
         <receiver
             android:name=".integration.dexdrip.DataReceiver"
-            android:exported="true"
-            android:permission="TODO">
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.eveningoutpost.dexdrip.BgEstimate" />
             </intent-filter>

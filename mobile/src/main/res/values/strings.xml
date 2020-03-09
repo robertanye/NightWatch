@@ -72,5 +72,16 @@
     <string name="mmol_mol_n">-- mmol/mol\n --%</string>
     <string name="stddev">StdDev:</string>
     <string name="_three_dashes_">---</string>
+    <string name="title_activity_nav_drawer">NavDrawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+
+    <string name="home_second">Home Second</string>
+    <string name="save">Save</string>
 
 </resources>

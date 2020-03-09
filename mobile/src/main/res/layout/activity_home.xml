@@ -10,10 +10,13 @@
         android:id="@+id/toolbar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:background="?attr/colorPrimary"
+        android:fitsSystemWindows="true"
+        android:minHeight="?attr/actionBarSize"
         android:gravity="center"
         android:elevation="4dp"/>
+
     <androidx.drawerlayout.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -41,6 +44,7 @@
                     android:id="@+id/notices"
                     android:layout_width="900dp"
                     android:layout_height="wrap_content"
+                    android:layout_alignStart="@id/currentBgValueRealTime"
                     android:layout_alignParentStart="true"
                     android:background="#07000000"
                     android:gravity="left|top"
@@ -80,12 +84,12 @@
                 android:layout_weight=".20" />
 
         </LinearLayout>
-        <androidx.fragment.app.FragmentContainerView
+        <fragment
             android:id="@+id/navigation_drawer"
             android:layout_width="240dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:name="com.dexdrip.stephenblack.nightwatch.NavigationDrawerFragment"
-            tools:layout="@layout/fragment_navigation_drawer" />
+            tools:layout="@layout/fragment_navigation_drawer"/>
     </androidx.drawerlayout.widget.DrawerLayout>
 </LinearLayout>

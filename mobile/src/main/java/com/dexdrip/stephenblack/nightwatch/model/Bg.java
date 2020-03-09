@@ -20,6 +20,7 @@ import com.google.gson.annotations.Expose;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.RequiresApi;
 
@@ -193,12 +194,12 @@ public class Bg extends Model {
     }
 
     public static double timeSince() {
-        String lastdate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date ((long)Bg.last().datetime));
+        String lastdate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault()).format(new java.util.Date ((long)Bg.last().datetime));
 
         Log.i(TAG_ALERT,"timeSince: datetime " + lastdate);
         long last = (long)Bg.last().datetime;
         long now = new Date().getTime();
-        String nowdate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (now));
+        String nowdate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss",Locale.getDefault()).format(new java.util.Date (now));
         Log.i(TAG_ALERT,"timeSince: now " + nowdate);
 
         long diffInMillis = now - last;

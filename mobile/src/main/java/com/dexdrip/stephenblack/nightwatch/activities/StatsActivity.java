@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch.stats;
+package com.dexdrip.stephenblack.nightwatch.activities;
 
 
 import android.content.res.ColorStateList;
@@ -21,6 +21,9 @@ import android.widget.Toast;
 
 import com.dexdrip.stephenblack.nightwatch.activities.BaseActivity;
 import com.dexdrip.stephenblack.nightwatch.R;
+import com.dexdrip.stephenblack.nightwatch.stats.ChartFragment;
+import com.dexdrip.stephenblack.nightwatch.stats.FirstPageFragment;
+import com.dexdrip.stephenblack.nightwatch.stats.PercentileFragment;
 
 
 public class StatsActivity extends BaseActivity {

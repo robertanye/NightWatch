@@ -25,6 +25,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.dexdrip.stephenblack.nightwatch.activities.EditAlertActivity;
 import com.dexdrip.stephenblack.nightwatch.model.ActiveBgAlert;
 import com.dexdrip.stephenblack.nightwatch.model.AlertType;
 import com.dexdrip.stephenblack.nightwatch.model.UserError.Log;

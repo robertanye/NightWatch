@@ -9,8 +9,8 @@ import com.dexdrip.stephenblack.nightwatch.activities.About;
 import com.dexdrip.stephenblack.nightwatch.activities.Home;
 import com.dexdrip.stephenblack.nightwatch.activities.SettingsActivity;
 import com.dexdrip.stephenblack.nightwatch.alerts.AlertList;
-import com.dexdrip.stephenblack.nightwatch.alerts.SnoozeActivity;
-import com.dexdrip.stephenblack.nightwatch.stats.StatsActivity;
+import com.dexdrip.stephenblack.nightwatch.activities.SnoozeActivity;
+import com.dexdrip.stephenblack.nightwatch.activities.StatsActivity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +39,9 @@ public class NavDrawerBuilder {
         this.nav_drawer_options.add(Home.MENU_NAME);
         this.nav_drawer_intents.add(new Intent(context, Home.class));
 
+        this.nav_drawer_options.add(SettingsActivity.MENU_NAME);
+        this.nav_drawer_intents.add(new Intent(context, SettingsActivity.class));
+
         this.nav_drawer_options.add(StatsActivity.MENU_NAME);
         this.nav_drawer_intents.add(new Intent(context, StatsActivity.class));
 
@@ -48,9 +51,6 @@ public class NavDrawerBuilder {
         this.nav_drawer_options.add(SnoozeActivity.MENU_NAME);
         this.nav_drawer_intents.add(new Intent(context, SnoozeActivity.class));
 
-
-        this.nav_drawer_options.add(SettingsActivity.MENU_NAME);
-        this.nav_drawer_intents.add(new Intent(context, SettingsActivity.class));
 
         this.nav_drawer_options.add(About.MENU_NAME);
         this.nav_drawer_intents.add(new Intent(context, About.class));

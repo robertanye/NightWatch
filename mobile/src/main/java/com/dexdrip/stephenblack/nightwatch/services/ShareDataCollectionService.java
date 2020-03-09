@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -33,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DataCollectionService extends Service {
+public class ShareDataCollectionService extends Service {
     public static final int TIMEOUT = 15000; // 15 seconds for testing. Lower it afterwards.
     DataFetcher dataFetcher;
     SharedPreferences mPrefs;
@@ -156,6 +155,7 @@ public class DataCollectionService extends Service {
         if (last_bg != null) {
             return Math.max((1000 * 30), Math.min(((long) (((1000 * 60 * 5) + 15000) - ((new Date().getTime()) - last_bg.datetime))), (1000 * 60 * 5)));
         } else {
+            // 5 mins
             return (1000 * 60 * 5);
         }
     }
@@ -175,7 +175,7 @@ public class DataCollectionService extends Service {
             try {
                 if(mPrefs.getBoolean("nightscout_poll", false)) {
                     Log.d("NightscoutPoll", "fetching " + requestCount);
-                    boolean success = new Rest(mContext).getBg(requestCount);
+                    boolean success = new NightWatchRest(mContext).getBg(requestCount);
                     Thread.sleep(10000);
                     if (success) {
                         //quick fix: stay awake a bit to handover wakelog
@@ -194,9 +194,8 @@ public class DataCollectionService extends Service {
                     Callback<List<ShareGlucose>> shareDataCallback = new Callback<List<ShareGlucose>>() {
                         @Override
                         public void onResponse(Call<List<ShareGlucose>> call, Response<List<ShareGlucose>> response) {
-
+                            Log.d("ShareRest","onResponse");
                         }
-
                         @Override
                         public void onFailure(Call<List<ShareGlucose>> call, Throwable t) {
 
