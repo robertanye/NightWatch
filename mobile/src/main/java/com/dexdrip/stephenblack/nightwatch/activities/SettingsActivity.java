@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 
-import com.dexdrip.stephenblack.nightwatch.services.ShareDataCollectionService;
+import com.dexdrip.stephenblack.nightwatch.services.DataCollectionService;
 import com.dexdrip.stephenblack.nightwatch.watch.PebbleSync;
 import com.dexdrip.stephenblack.nightwatch.R;
 
@@ -101,7 +101,7 @@ public class SettingsActivity extends AppCompatActivity  {
 
             Preference.OnPreferenceChangeListener collectionPrefValueListener = (preference, value) -> {
                 Context context = preference.getContext();
-                context.startService(new Intent(context, ShareDataCollectionService.class));
+                context.startService(new Intent(context, DataCollectionService.class));
                 return true;
             };
 
@@ -114,7 +114,7 @@ public class SettingsActivity extends AppCompatActivity  {
                     dataSource.removePreference(dexcom_account_password);
                 }
                 Context context = preference.getContext();
-                context.startService(new Intent(context, ShareDataCollectionService.class));
+                context.startService(new Intent(context, DataCollectionService.class));
                 return true;
             });
 
@@ -125,7 +125,7 @@ public class SettingsActivity extends AppCompatActivity  {
                     dataSource.removePreference(dex_collection_method);
                 }
                 Context context = preference.getContext();
-                context.startService(new Intent(context, ShareDataCollectionService.class));
+                context.startService(new Intent(context, DataCollectionService.class));
                 return true;
             });
 

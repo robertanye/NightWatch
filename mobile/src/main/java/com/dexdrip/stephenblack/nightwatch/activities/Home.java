@@ -19,7 +19,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.dexdrip.stephenblack.nightwatch.BgGraphBuilder;
-import com.dexdrip.stephenblack.nightwatch.services.ShareDataCollectionService;
+import com.dexdrip.stephenblack.nightwatch.services.DataCollectionService;
 import com.dexdrip.stephenblack.nightwatch.R;
 import com.dexdrip.stephenblack.nightwatch.services.WatchUpdaterService;
 import com.dexdrip.stephenblack.nightwatch.integration.dexdrip.Intents;
@@ -80,7 +80,7 @@ public class Home extends BaseActivity {
 
         new dbModelMigrations(getApplicationContext()).performAll();
 
-        startService(new Intent(getApplicationContext(), ShareDataCollectionService.class));
+        startService(new Intent(getApplicationContext(), DataCollectionService.class));
 
         preferenceChangeListener = (sharedPreferences, key) -> invalidateOptionsMenu();
 

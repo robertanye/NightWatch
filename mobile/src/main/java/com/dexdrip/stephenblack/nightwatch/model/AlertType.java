@@ -1,7 +1,6 @@
 package com.dexdrip.stephenblack.nightwatch.model;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
@@ -12,10 +11,8 @@ import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
 import com.dexdrip.stephenblack.nightwatch.alerts.AlertPlayer;
-import com.dexdrip.stephenblack.nightwatch.alerts.MissedReadingService;
 import com.dexdrip.stephenblack.nightwatch.alerts.Notifications;
 import com.dexdrip.stephenblack.nightwatch.model.UserError.Log;
-import com.dexdrip.stephenblack.nightwatch.model.Bg;
 
 import java.util.Calendar;
 import java.util.Date;

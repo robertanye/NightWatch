@@ -32,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ShareDataCollectionService extends Service {
+public class DataCollectionService extends Service {
     public static final int TIMEOUT = 15000; // 15 seconds for testing. Lower it afterwards.
     DataFetcher dataFetcher;
     SharedPreferences mPrefs;
@@ -173,6 +173,7 @@ public class ShareDataCollectionService extends Service {
                 requestCount = requestCount();
             }
             try {
+                // Using Nightscout data source
                 if(mPrefs.getBoolean("nightscout_poll", false)) {
                     Log.d("NightscoutPoll", "fetching " + requestCount);
                     boolean success = new NightWatchRest(mContext).getBg(requestCount);
@@ -188,6 +189,7 @@ public class ShareDataCollectionService extends Service {
                     if(mWakeLock != null && mWakeLock.isHeld()) { mWakeLock.release(); }
                     return true;
                 }
+                // Using Dexcom Share data source
                 if(mPrefs.getBoolean("share_poll", false)) {
                     Log.d("ShareRest", "fetching " + requestCount);
                     // create the callback function
@@ -237,6 +239,7 @@ public class ShareDataCollectionService extends Service {
             Intent updateIntent = new Intent(Intents.ACTION_NEW_BG);
             //test wakelock: stay awake a bit to handover wakelog
             powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NW:quickFix1").acquire(TIMEOUT);
+            // let listeners know there is new data
             context.sendBroadcast(updateIntent);
         }
         context.startService(new Intent(context, Notifications.class));

@@ -80,7 +80,7 @@ public class NightWatchRest {
                         }
                     }
                     returnedBg.save();
-                    ShareDataCollectionService.newDataArrived(mContext, true, returnedBg);
+                    DataCollectionService.newDataArrived(mContext, true, returnedBg);
                     newData = true;
                 }
             }
@@ -104,7 +104,8 @@ public class NightWatchRest {
 
         Retrofit restInf = new Retrofit.Builder()
                 .baseUrl(mUrl)
-                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder() .excludeFieldsWithoutExposeAnnotation().create()))
+                .addConverterFactory(GsonConverterFactory
+                .create(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()))
                 .build();
         return restInf.create(PebbleEndpointInterface.class);
 

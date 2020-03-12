@@ -21,7 +21,6 @@ repositories {
         url "https://raw.github.com/embarkmobile/zxing-android-minimal/mvn-repo/maven-repository/"
     }
     maven { url "https://jitpack.io" }
-    maven { url "https://oss.sonatype.org/content/groups/public/" }
 }
 
 def getReleaseVersionCode() {
@@ -43,24 +42,25 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.dexdrip.stephenblack.nightwatch"
-        minSdkVersion 29
+        minSdkVersion 28
         targetSdkVersion 29
-        versionName '2.0.8'
+        versionName '2.0.9'
+        versionCode 15
         multiDexEnabled true
-
-//        javaCompileOptions {
-//            annotationProcessorOptions {
-//                includeCompileClasspath = true
-//            }
-//        }
+        testOptions {
+            unitTests {
+                includeAndroidResources = true
+            }
+        }
 
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
-        def project = "NightWatch"
+        def project = "NightWatch-mobile"
         def SEP = "_"
         def date = new Date()
         def formattedDate = date.format('MMddyy_HHmm')
@@ -97,6 +97,8 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation fileTree(dir: 'libs')
+    // This is a downloaded version of ActiveAndroid
+    implementation files('libs/ActiveAndroid.jar')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.navigation:navigation-fragment:2.2.1'
@@ -111,10 +113,9 @@ dependencies {
     implementation 'com.github.lecho:hellocharts-android:v1.5.5'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    //implementation 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
-
-    implementation 'junit:junit:4.13'
     implementation 'com.google.android.material:material:1.1.0'
-    //implementation 'org.testifyproject.mock:mockito:1.0.6'
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'info.solidsoft.mockito:mockito-java8:2.5.0'
+    testImplementation 'org.robolectric:robolectric:4.3.1'
 }

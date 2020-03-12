@@ -72,7 +72,7 @@ public class AlertList extends BaseActivity {
     }
 
     ArrayList<HashMap<String, String>> createAlertsMap(AlertType.alertType type ) {
-        ArrayList<HashMap<String, String>> feedList= new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> feedList= new ArrayList<>();
 
         List<AlertType> alerts = AlertType.getAll(type);
         for (AlertType alert : alerts) {
@@ -136,31 +136,24 @@ public class AlertList extends BaseActivity {
         createHighAlert = findViewById(R.id.button_create_high);
         createMissedAlert = findViewById(R.id.button_create_missed);
 
-        createLowAlert.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent myIntent = new Intent(AlertList.this, EditAlertActivity.class);
-                myIntent.putExtra("alertTypeClicked", "low");
-                AlertList.this.startActivityForResult(myIntent, ADD_ALERT);
-            }
+        createLowAlert.setOnClickListener(v -> {
+            Intent myIntent = new Intent(AlertList.this, EditAlertActivity.class);
+            myIntent.putExtra("alertTypeClicked", "low");
+            AlertList.this.startActivityForResult(myIntent, ADD_ALERT);
+        });
 
-        }); 
-
-        createHighAlert.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent myIntent = new Intent(AlertList.this, EditAlertActivity.class);
-                myIntent.putExtra("alertTypeClicked", "high");
-                AlertList.this.startActivityForResult(myIntent, ADD_ALERT);
-            }
+        createHighAlert.setOnClickListener(v -> {
+            Intent myIntent = new Intent(AlertList.this, EditAlertActivity.class);
+            myIntent.putExtra("alertTypeClicked", "high");
+            AlertList.this.startActivityForResult(myIntent, ADD_ALERT);
         });
 
 
 
-        createMissedAlert.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent myIntent = new Intent(AlertList.this, EditAlertActivity.class);
-                myIntent.putExtra("alertTypeClicked", "missed");
-                AlertList.this.startActivityForResult(myIntent, ADD_ALERT);
-            }
+        createMissedAlert.setOnClickListener(v -> {
+            Intent myIntent = new Intent(AlertList.this, EditAlertActivity.class);
+            myIntent.putExtra("alertTypeClicked", "missed");
+            AlertList.this.startActivityForResult(myIntent, ADD_ALERT);
         });
     }
 

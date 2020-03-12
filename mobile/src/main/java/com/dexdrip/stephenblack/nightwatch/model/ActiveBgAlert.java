@@ -6,10 +6,12 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
+import com.dexdrip.stephenblack.nightwatch.Cal;
 import com.dexdrip.stephenblack.nightwatch.alerts.AlertPlayer;
 import com.dexdrip.stephenblack.nightwatch.model.UserError.Log;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import static com.dexdrip.stephenblack.nightwatch.model.AlertType.get_alert;
@@ -66,8 +68,8 @@ public class ActiveBgAlert extends Model {
 
         String alert_uuid = "alert_uuid: " + this.alert_uuid;
         String is_snoozed = "is_snoozed: " + this.is_snoozed;
-        String last_alerted_at = "last_alerted_at: " + DateFormat.getDateTimeInstance(
-                DateFormat.LONG, DateFormat.LONG).format(new Date(this.last_alerted_at));
+        String last_alerted_at = "last_alerted_at: " +
+                DateFormat.getDateTimeInstance( DateFormat.LONG, DateFormat.LONG).format(new Date(this.last_alerted_at));
         String next_alert_at = "next_alert_at: " + DateFormat.getDateTimeInstance(
                 DateFormat.LONG, DateFormat.LONG).format(new Date(this.next_alert_at));
 
@@ -125,7 +127,8 @@ public class ActiveBgAlert extends Model {
         // get the alert that caused this
         AlertType a1 = get_alert(alert_uuid);
         aba.type = a1.type;
-        aba.last_alerted_at = 0L;
+        Calendar calendar = java.util.Calendar.getInstance();
+        aba.last_alerted_at = calendar.getTimeInMillis();
         aba.next_alert_at = next_alert_at;
         aba.alert_started_at = new Date().getTime();
         aba.save();
@@ -158,6 +161,13 @@ public class ActiveBgAlert extends Model {
         }
         Long timeSeconds =  (new Date().getTime() - alert_started_at) / 1000;
         return (int)Math.round(timeSeconds / 60.0);
+    }
+    public static void updateLastAlertAt(long last_alerted){
+        ActiveBgAlert aba = getOnly();
+        if (aba != null) {
+            aba.last_alerted_at = last_alerted;
+            aba.save();
+        }
     }
 
     public void updateNextAlertAt(long nextAlertTime){

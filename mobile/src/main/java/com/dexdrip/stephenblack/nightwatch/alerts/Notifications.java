@@ -82,7 +82,7 @@ public class Notifications extends IntentService {
 
     NotificationChannel mChannel;
     SharedPreferences prefs;
-    static final String NW_CHAN_ID = "Notifications Channel";
+    static final String NW_CHAN_ID = "BG";
 
     public Notifications() {
         super("Notifications");
@@ -92,15 +92,14 @@ public class Notifications extends IntentService {
 
         NotificationManager mNotifyMgr = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
         assert mNotifyMgr != null;
-        mChannel = mNotifyMgr.getNotificationChannel(ctx.getString(R.string.channel_name));
+        mChannel = mNotifyMgr.getNotificationChannel(NW_CHAN_ID);
         if (mChannel == null) {
-            String id = ctx.getString(R.string.channel_name); // default_channel_id
-            String title = ctx.getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_LOW;
+            String id = NW_CHAN_ID;
+            String title = "BG";
+            int importance = NotificationManager.IMPORTANCE_MIN;
             mChannel = new NotificationChannel(id, title, importance);
             mChannel.enableVibration(false);
             mChannel.setLightColor(Color.RED);
-            //mChannel.setVibrationPattern(vibratePattern);
             mNotifyMgr.createNotificationChannel(mChannel);
         }
 
@@ -325,7 +324,7 @@ public class Notifications extends IntentService {
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-        NotificationCompat.Builder b = new NotificationCompat.Builder(mContext,context.getString(R.string.channel_name));
+        NotificationCompat.Builder b = new NotificationCompat.Builder(mContext,NW_CHAN_ID);
         b.setCategory(NotificationCompat.CATEGORY_STATUS);
         String titleString = lastReading == null ? "BG Reading Unavailable" : (lastReading.displayValue(mContext) + " " + lastReading.slopeArrow());
         b.setContentTitle(titleString)
@@ -373,7 +372,7 @@ public class Notifications extends IntentService {
 
 
     private NotificationCompat.Builder notificationBuilder(String title, String content, Intent intent) {
-        return new NotificationCompat.Builder(mContext, getApplicationContext().getString(R.string.channel_name))
+        return new NotificationCompat.Builder(mContext, NW_CHAN_ID)
                 .setSmallIcon(R.drawable.ic_action_communication_invert_colors_on)
                 .setContentTitle(title)
                 .setContentText(content)
@@ -431,7 +430,7 @@ public class Notifications extends IntentService {
             UserNotificationV2.create(message, type);
             Intent intent = new Intent(context, Home.class);
             NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(context, context.getString(R.string.channel_name))
+                    new NotificationCompat.Builder(context, NW_CHAN_ID)
                             .setSmallIcon(R.drawable.ic_action_communication_invert_colors_on)
                             .setContentTitle(message)
                             .setContentText(message)
@@ -512,7 +511,7 @@ public class Notifications extends IntentService {
     private void calibrationNotificationCreate(String title, String content, Intent intent, int notificationId) {
         NotificationCompat.Builder mBuilder = notificationBuilder(title, content, intent);
         mBuilder.setChannelId(NW_CHAN_ID);
-        //mBuilder.setVibrate(vibratePattern);
+        mBuilder.setVibrate(vibratePattern);
         mBuilder.setColor(Color.RED);
 
         if(calibration_override_silent) {
