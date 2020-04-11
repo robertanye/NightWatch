@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch.watch;
+package com.dexdrip.stephenblack.nightwatch.widget;
 
 
 import android.app.PendingIntent;
@@ -10,7 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -114,7 +114,7 @@ public class NightWatchWidget extends AppWidgetProvider {
 
                 views.setViewVisibility(R.id.widget_time, View.GONE);
                 if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    views.setTextViewTextSize(R.id.widgetBg, TypedValue.COMPLEX_UNIT_SP, 55);
+                    views.setTextViewTextSize(R.id.widgetBg, TypedValue.COMPLEX_UNIT_SP, 40);
                     views.setTextViewTextSize(R.id.widgetArrow, TypedValue.COMPLEX_UNIT_SP, 37);
 
                 }

@@ -19,7 +19,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -93,15 +93,14 @@ public class Notifications extends IntentService {
         NotificationManager mNotifyMgr = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
         assert mNotifyMgr != null;
         mChannel = mNotifyMgr.getNotificationChannel(NW_CHAN_ID);
-        if (mChannel == null) {
-            String id = NW_CHAN_ID;
-            String title = "BG";
-            int importance = NotificationManager.IMPORTANCE_MIN;
-            mChannel = new NotificationChannel(id, title, importance);
-            mChannel.enableVibration(false);
-            mChannel.setLightColor(Color.RED);
-            mNotifyMgr.createNotificationChannel(mChannel);
-        }
+        String id = NW_CHAN_ID;
+        String title = "BG";
+        int importance = NotificationManager.IMPORTANCE_MIN;
+        mChannel = new NotificationChannel(id, title, importance);
+        mChannel.enableVibration(false);
+        mChannel.setLightColor(Color.RED);
+        mChannel.setSound(null,null);
+        mNotifyMgr.createNotificationChannel(mChannel);
 
     }
     @Override

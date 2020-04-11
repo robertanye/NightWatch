@@ -9,7 +9,7 @@ import android.graphics.CornerPathEffect;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import androidx.core.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;

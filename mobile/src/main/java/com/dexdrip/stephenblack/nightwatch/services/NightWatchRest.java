@@ -3,7 +3,7 @@ package com.dexdrip.stephenblack.nightwatch.services;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import com.dexdrip.stephenblack.nightwatch.Cal;
@@ -43,7 +43,6 @@ public class NightWatchRest {
 
     boolean getBg(int count) {
         if (!prefs.getBoolean("nightscout_poll", false) && mUrl.compareTo("") != 0 && mUrl.compareTo("https://{yoursite}herokuapp.com") != 0) {
-            if(wakeLock != null && wakeLock.isHeld()) { wakeLock.release(); }
             return false;
         }
         try {
@@ -84,7 +83,7 @@ public class NightWatchRest {
                     newData = true;
                 }
             }
-            Log.d("REST CALL SUCCESS: ", "HORRAY");
+            Log.d("REST CALL SUCCESS: ", "OK");
             if(wakeLock != null && wakeLock.isHeld()) { wakeLock.release(); }
             return newData;
         } catch (Exception e) {

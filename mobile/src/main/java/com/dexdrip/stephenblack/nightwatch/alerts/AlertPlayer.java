@@ -11,7 +11,7 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import androidx.core.app.NotificationCompat;
 
 import com.dexdrip.stephenblack.nightwatch.activities.EditAlertActivity;
@@ -68,21 +68,18 @@ public class AlertPlayer {
         NotificationManager mNotifyMgr = (NotificationManager) ctx.getSystemService(NotificationManager.class);
         assert mNotifyMgr != null;
         mChannel = mNotifyMgr.getNotificationChannel(NW_AlertChannel);
-        if (mChannel == null) {
-            String id = NW_AlertChannel;
-            String title = "Alerts BG and Missing Data";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            mChannel = new NotificationChannel(id, title, importance);
-            mChannel.setLightColor(Color.WHITE);
-            mChannel.enableVibration(true);
-            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-            mChannel.setSound(Uri.parse(alert.mp3_file),
-                    new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build());
-            mNotifyMgr.createNotificationChannel(mChannel);
-        }
+        String id = NW_AlertChannel;
+        String title = "Alerts BG and Missing Data";
+        mChannel = new NotificationChannel(id, title, NotificationManager.IMPORTANCE_HIGH);
+        mChannel.setLightColor(Color.RED);
+        mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+        mChannel.enableVibration(true);
+        mChannel.setSound(Uri.parse(alert.mp3_file),
+                new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_INSTANT)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build());
+        mNotifyMgr.createNotificationChannel(mChannel);
 
     }
     public synchronized  void startAlert(Context ctx, boolean trendingToAlertEnd, AlertType newAlert, String bgValue )  {

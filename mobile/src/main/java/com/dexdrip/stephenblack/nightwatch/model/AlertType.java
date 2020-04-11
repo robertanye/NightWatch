@@ -2,7 +2,7 @@ package com.dexdrip.stephenblack.nightwatch.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.Settings;
 

@@ -110,6 +110,10 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <service
+            android:name=".services.DataJobCollectionService"
+            android:permission="android.permission.BIND_JOB_SERVICE">
+        </service>
         <receiver
             android:name=".integration.dexdrip.DataReceiver"
             android:exported="true">
@@ -117,7 +121,7 @@
                 <action android:name="com.eveningoutpost.dexdrip.BgEstimate" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".watch.NightWatchWidget">
+        <receiver android:name=".widget.NightWatchWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -126,7 +130,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/night_watch_widget_small_info" />
         </receiver>
-        <receiver android:name=".watch.NightWatchWidgetWide">
+        <receiver android:name=".widget.NightWatchWidgetWide">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

@@ -3,7 +3,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:key="other_category"
-        android:title="Other Settings">
+        android:title="View Log">
         <Preference
             android:title="View Recent Errors/Warnings"
             android:key="recent_errors">

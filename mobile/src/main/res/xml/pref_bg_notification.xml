@@ -22,6 +22,7 @@
             android:key="bg_play_sound"
             android:title="Play sound on BG alerts"
             android:defaultValue="true" />
+        <!--
         <RingtonePreference
             android:dependency="bg_play_sound"
             android:key="bg_notification_sound"
@@ -29,6 +30,7 @@
             android:ringtoneType="notification"
             android:summary="Set sound used for BG Alerts."
             android:defaultValue="content://settings/system/notification_sound" />
+            -->
         <CheckBoxPreference
             android:dependency="bg_play_sound"
             android:key="bg_sound_in_silent"

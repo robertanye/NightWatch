@@ -3,7 +3,7 @@ package com.dexdrip.stephenblack.nightwatch.services;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import com.dexdrip.stephenblack.nightwatch.watch.PebbleSync;

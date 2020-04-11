@@ -13,8 +13,8 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.dexdrip.stephenblack.nightwatch.watch.NightWatchWidget;
-import com.dexdrip.stephenblack.nightwatch.watch.NightWatchWidgetWide;
+import com.dexdrip.stephenblack.nightwatch.widget.NightWatchWidget;
+import com.dexdrip.stephenblack.nightwatch.widget.NightWatchWidgetWide;
 
 import java.util.Calendar;
 

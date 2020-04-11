@@ -4,20 +4,15 @@ package com.dexdrip.stephenblack.nightwatch.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceFragmentCompat;
 
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
 
 import com.dexdrip.stephenblack.nightwatch.services.DataCollectionService;
 import com.dexdrip.stephenblack.nightwatch.watch.PebbleSync;
@@ -37,8 +32,9 @@ public class SettingsActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setTheme(R.style.navDrawer);
         AllPrefsFragment prefsFragment = new AllPrefsFragment();
-        getFragmentManager().beginTransaction().replace(android.R.id.content,
-                prefsFragment).commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(android.R.id.content, prefsFragment).commit();
     }
 
     @Override
@@ -51,32 +47,33 @@ public class SettingsActivity extends AppCompatActivity  {
         setIntent(intent);
         super.onNewIntent(intent);
     }
-    public static class AllPrefsFragment extends PreferenceFragment {
+    public static class AllPrefsFragment extends PreferenceFragmentCompat {
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
-
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_license);
 
-            //General
+            //Notifications
+            addPreferencesFromResource(R.xml.pref_notifications);
+            //bindPreferenceSummaryToValue(findPreference("other_alerts_sound"));
+            addPreferencesFromResource(R.xml.pref_graph);
+            bindPreferenceSummaryToValueAndEnsureNumeric(findPreference("maxBgYAxis"));
+            addPreferencesFromResource(R.xml.pref_rates);
+            bindPreferenceSummaryToValueAndEnsureNumeric(findPreference("other_alerts_snooze"));
+            addPreferencesFromResource(R.xml.pref_data_source);
             addPreferencesFromResource(R.xml.pref_general);
             bindPreferenceSummaryToValueAndEnsureNumeric(findPreference("highValue"));
             bindPreferenceSummaryToValueAndEnsureNumeric(findPreference("lowValue"));
-
-            //Notifications
-            addPreferencesFromResource(R.xml.pref_notifications);
-            bindPreferenceSummaryToValueAndEnsureNumeric(findPreference("maxBgYAxis"));
+            addPreferencesFromResource(R.xml.pref_bg_notification);
             bindPreferenceSummaryToValue(findPreference("bg_alert_profile"));
             bindPreferenceSummaryToValue(findPreference("falling_bg_val"));
             bindPreferenceSummaryToValue(findPreference("rising_bg_val"));
-            bindPreferenceSummaryToValue(findPreference("other_alerts_sound"));
-            bindPreferenceSummaryToValueAndEnsureNumeric(findPreference("other_alerts_snooze"));
-
-            addPreferencesFromResource(R.xml.pref_data_source);
             addPreferencesFromResource(R.xml.pref_watch_integration);
+
             final Preference pebbleSync = findPreference("broadcast_to_pebble");
 
-            addPreferencesFromResource(R.xml.pref_other);
+            addPreferencesFromResource(R.xml.pref_errors);
 
             bindPreferenceSummaryToValue(findPreference("dex_collection_method"));
             bindPreferenceSummaryToValue(findPreference("units"));
@@ -90,7 +87,6 @@ public class SettingsActivity extends AppCompatActivity  {
             final Preference dex_collection_method = findPreference("dex_collection_method");
 
             prefs = getPreferenceManager().getSharedPreferences();
-
             if (!prefs.getBoolean("nightscout_poll", false)) {
                 dataSource.removePreference(dex_collection_method);
             }
@@ -98,13 +94,6 @@ public class SettingsActivity extends AppCompatActivity  {
                 dataSource.removePreference(dexcom_account_name);
                 dataSource.removePreference(dexcom_account_password);
             }
-
-            Preference.OnPreferenceChangeListener collectionPrefValueListener = (preference, value) -> {
-                Context context = preference.getContext();
-                context.startService(new Intent(context, DataCollectionService.class));
-                return true;
-            };
-
             share_poll.setOnPreferenceChangeListener((preference, value) -> {
                 if ((boolean) value) {
                     dataSource.addPreference(dexcom_account_name);
@@ -129,6 +118,12 @@ public class SettingsActivity extends AppCompatActivity  {
                 return true;
             });
 
+            Preference.OnPreferenceChangeListener collectionPrefValueListener = (preference, value) -> {
+                Context context = preference.getContext();
+                context.startService(new Intent(context, DataCollectionService.class));
+                return true;
+            };
+
             dexcom_account_name.setOnPreferenceChangeListener(collectionPrefValueListener);
             dexcom_account_password.setOnPreferenceChangeListener(collectionPrefValueListener);
             dex_collection_method.setOnPreferenceChangeListener(collectionPrefValueListener);
@@ -142,6 +137,10 @@ public class SettingsActivity extends AppCompatActivity  {
                 }
                 return true;
             });
+        }
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+
         }
 
     }
@@ -166,21 +165,22 @@ public class SettingsActivity extends AppCompatActivity  {
                             ? listPreference.getEntries()[index]
                             : null);
 
-        } else if (preference instanceof RingtonePreference) {
-            if (TextUtils.isEmpty(stringValue)) {
-                preference.setSummary("Silent");
-            } else {
-                Ringtone ringtone = RingtoneManager.getRingtone(
-                        preference.getContext(), Uri.parse(stringValue));
-
-                if (ringtone == null) {
-                    preference.setSummary(null);
-                } else {
-                    String name = ringtone.getTitle(preference.getContext());
-                    preference.setSummary(name);
-                }
-            }
-        } else {
+        }
+//        else if (preference instanceof ringtonepreference) {
+//            if (textutils.isempty(stringvalue)) {
+//                preference.setsummary("silent");
+//            } else {
+//                ringtone ringtone = ringtonemanager.getringtone(
+//                        preference.getcontext(), uri.parse(stringvalue));
+//
+//                if (ringtone == null) {
+//                    preference.setsummary(null);
+//                } else {
+//                    string name = ringtone.gettitle(preference.getcontext());
+//                    preference.setsummary(name);
+//                }
+//            }
+       else {
             preference.setSummary(stringValue);
         }
         return true;

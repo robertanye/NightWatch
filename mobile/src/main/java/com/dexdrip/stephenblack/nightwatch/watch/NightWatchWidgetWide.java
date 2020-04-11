@@ -1,4 +1,4 @@
-package com.dexdrip.stephenblack.nightwatch.watch;
+package com.dexdrip.stephenblack.nightwatch.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 

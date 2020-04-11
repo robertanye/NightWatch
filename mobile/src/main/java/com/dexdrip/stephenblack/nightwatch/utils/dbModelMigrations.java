@@ -2,7 +2,7 @@ package com.dexdrip.stephenblack.nightwatch.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.dexdrip.stephenblack.nightwatch.model.AlertType;
 import com.dexdrip.stephenblack.nightwatch.activities.SnoozeActivity;

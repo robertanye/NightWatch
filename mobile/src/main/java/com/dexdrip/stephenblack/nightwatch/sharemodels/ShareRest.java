@@ -3,7 +3,7 @@ package com.dexdrip.stephenblack.nightwatch.sharemodels;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import com.dexdrip.stephenblack.nightwatch.model.Bg;

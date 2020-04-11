@@ -3,13 +3,18 @@ package com.dexdrip.stephenblack.nightwatch.services;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.job.JobInfo;
+import android.app.job.JobParameters;
+import android.app.job.JobScheduler;
+import android.app.job.JobService;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import com.activeandroid.Cache;
@@ -46,10 +51,17 @@ public class DataCollectionService extends Service {
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+    public void doService(PowerManager.WakeLock wakeLock) {
+        doService(1, wakeLock);
+    }
+    public void doService(int count, PowerManager.WakeLock wakeLock) {
+        Log.d("DataCollectionService Performing data fetch:  ", DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date()));
+        dataFetcher = new DataFetcher(getApplicationContext(), wakeLock);
+        dataFetcher.execute(count);
+    }
 
     @Override
     public void onCreate() {
-
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         setSettings();
         listenForChangeInSettings();
@@ -104,6 +116,7 @@ public class DataCollectionService extends Service {
         endpoint_set = mPrefs.getBoolean("nightscout_poll", false) || mPrefs.getBoolean("share_poll", false);
     }
     public void setFailoverTimer() {
+
         long retry_in = (1000 * 60 * 6);
         Log.d("DataCollectionService", "Fallover Restarting in: " + (retry_in / (60 * 1000)) + " minutes");
         Calendar calendar = Calendar.getInstance();
@@ -122,12 +135,6 @@ public class DataCollectionService extends Service {
         };
         mPrefs.registerOnSharedPreferenceChangeListener(mPreferencesListener);
     }
-    public void doService(PowerManager.WakeLock wakeLock) { doService(1, wakeLock);}
-    public void doService(int count, PowerManager.WakeLock wakeLock) {
-        Log.d("Performing data fetch: ", "Wish me luck");
-        dataFetcher = new DataFetcher(getApplicationContext(), wakeLock);
-        dataFetcher.execute(count);
-    }
 
     public void setAlarm() {
         long retry_in = (long) sleepTime();
@@ -135,11 +142,14 @@ public class DataCollectionService extends Service {
         Calendar calendar = Calendar.getInstance();
         AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
         long wakeTime = calendar.getTimeInMillis() + retry_in;
-        Log.d(this.getClass().getName() , "ArmTimer waking at: "+ new Date(wakeTime) +" in " +  (wakeTime - calendar.getTimeInMillis())/60000d + " minutes");
+        Log.d(this.getClass().getName() , "ArmTimer waking at: "+
+                DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date()) + " in " +
+                (wakeTime - calendar.getTimeInMillis())/60000d + " minutes");
         if (wakeIntent != null) {
             assert alarm != null;
             alarm.cancel(wakeIntent);
         }
+        // reschedule ourselves
         wakeIntent = PendingIntent.getService(this, 0, new Intent(this, this.getClass()), 0);
         assert alarm != null;
         alarm.setAlarmClock(new AlarmManager.AlarmClockInfo(wakeTime, wakeIntent), wakeIntent);
@@ -159,7 +169,36 @@ public class DataCollectionService extends Service {
             return (1000 * 60 * 5);
         }
     }
-
+    public static void newDataArrived(Context context, boolean success, Bg bg) {
+        PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "NW:collector data arrived");
+        wakeLock.acquire(10*60*1000L /*10 minutes*/);
+        if (success && bg != null) {
+            Intent intent = new Intent(context, WatchUpdaterService.class);
+            DateFormat date = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
+            intent.putExtra("timestamp", bg.datetime);
+            Log.d("NewDataArrived", "New Data Arrived with timestamp "+ date);
+            context.startService(intent);
+            Intent updateIntent = new Intent(Intents.ACTION_NEW_BG);
+            //test wakelock: stay awake a bit to handover wakelog
+            powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NW:quickFix1").acquire(TIMEOUT);
+            // let listeners know there is new data
+            context.sendBroadcast(updateIntent);
+        }
+        context.startService(new Intent(context, Notifications.class));
+        if(wakeLock.isHeld()) { wakeLock.release(); }
+    }
+    public static int requestCount() {
+        Bg bg = Bg.last();
+        if(bg == null) {
+            return 576;
+        } else if (bg.datetime < new Date().getTime()) {
+            return Math.min((int) Math.ceil(((new Date().getTime() - bg.datetime) / (5 * 1000 * 60))), 576);
+        } else {
+            return 1;
+        }
+    }
     class DataFetcher extends AsyncTask<Integer, Void, Boolean> {
         Context mContext;
         PowerManager.WakeLock mWakeLock;
@@ -203,7 +242,6 @@ public class DataCollectionService extends Service {
 
                         }
                     };
-                    //Boolean shareRest = new ShareRest(mContext).getBgReadings(requestCount,  shareDataCallback );
                     Boolean shareRest = new ShareRest(mContext).getBgData();
                     if ( shareRest ) {
                         //test wakelock: stay awake a bit to handover wakelog
@@ -218,41 +256,11 @@ public class DataCollectionService extends Service {
                 }
                 return true;
             }
-            catch (InterruptedException exx) { Log.d("Interruption Error: ", "BOOOO"); }
-            catch (Exception ex) { Log.d("Unrecognized Error: ", "BOOOO"); }
+            catch (InterruptedException exx) { Log.e("Interruption Error: ", exx.toString()); }
+            catch (Exception ex) { Log.e("Unrecognized Error: ", ex.toString()); }
             if(mWakeLock != null && mWakeLock.isHeld()) { mWakeLock.release(); }
             return false;
         }
     }
 
-    public static void newDataArrived(Context context, boolean success, Bg bg) {
-        PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "NW:collector data arrived");
-        wakeLock.acquire(10*60*1000L /*10 minutes*/);
-        if (success && bg != null) {
-            Intent intent = new Intent(context, WatchUpdaterService.class);
-            DateFormat date = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
-            intent.putExtra("timestamp", bg.datetime);
-            Log.d("NewDataArrived", "New Data Arrived with timestamp "+ date);
-            context.startService(intent);
-            Intent updateIntent = new Intent(Intents.ACTION_NEW_BG);
-            //test wakelock: stay awake a bit to handover wakelog
-            powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NW:quickFix1").acquire(TIMEOUT);
-            // let listeners know there is new data
-            context.sendBroadcast(updateIntent);
-        }
-        context.startService(new Intent(context, Notifications.class));
-        if(wakeLock.isHeld()) { wakeLock.release(); }
-    }
-    public static int requestCount() {
-        Bg bg = Bg.last();
-        if(bg == null) {
-            return 576;
-        } else if (bg.datetime < new Date().getTime()) {
-            return Math.min((int) Math.ceil(((new Date().getTime() - bg.datetime) / (5 * 1000 * 60))), 576);
-        } else {
-            return 1;
-        }
-    }
 }

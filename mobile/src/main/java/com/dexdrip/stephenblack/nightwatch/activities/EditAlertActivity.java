@@ -12,7 +12,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.text.format.DateFormat;

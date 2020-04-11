@@ -1,6 +1,9 @@
 package com.dexdrip.stephenblack.nightwatch.activities;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 import com.dexdrip.stephenblack.nightwatch.BgGraphBuilder;
 import com.dexdrip.stephenblack.nightwatch.services.DataCollectionService;
 import com.dexdrip.stephenblack.nightwatch.R;
+import com.dexdrip.stephenblack.nightwatch.services.DataJobCollectionService;
 import com.dexdrip.stephenblack.nightwatch.services.WatchUpdaterService;
 import com.dexdrip.stephenblack.nightwatch.integration.dexdrip.Intents;
 import com.dexdrip.stephenblack.nightwatch.model.Bg;
@@ -34,8 +38,8 @@ import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewLineChartView;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static android.preference.PreferenceManager.setDefaultValues;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+import static androidx.preference.PreferenceManager.setDefaultValues;
 
 
 public class Home extends BaseActivity {
@@ -70,7 +74,7 @@ public class Home extends BaseActivity {
         setDefaultValues(this, R.xml.pref_general, false);
         setDefaultValues(this, R.xml.pref_license, false);
         setDefaultValues(this, R.xml.pref_data_source, false);
-        setDefaultValues(this, R.xml.pref_other, false);
+        setDefaultValues(this, R.xml.pref_errors, false);
         setDefaultValues(this, R.xml.pref_bg_notification, false);
         setDefaultValues(this, R.xml.pref_watch_integration, false);
 
@@ -81,6 +85,8 @@ public class Home extends BaseActivity {
         new dbModelMigrations(getApplicationContext()).performAll();
 
         startService(new Intent(getApplicationContext(), DataCollectionService.class));
+
+        //startDataCollectJob();
 
         preferenceChangeListener = (sharedPreferences, key) -> invalidateOptionsMenu();
 
@@ -100,6 +106,20 @@ public class Home extends BaseActivity {
             intent.setData(Uri.parse("package:" + packageName));
             startActivity(intent);
         }
+
+    }
+    public void startDataCollectJob() {
+        JobScheduler jobScheduler = (JobScheduler)getApplicationContext()
+                .getSystemService(JOB_SCHEDULER_SERVICE);
+
+        ComponentName componentName = new ComponentName(this,
+                DataJobCollectionService.class);
+
+        JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                .setPeriodic(1000,1000)
+                .setRequiredNetworkType( JobInfo.NETWORK_TYPE_NOT_ROAMING)
+                .setPersisted(true).build();
+        jobScheduler.schedule(jobInfo);
 
     }
 
